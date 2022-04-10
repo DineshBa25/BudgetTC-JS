@@ -6,15 +6,30 @@
   height: 40vmin;
   pointer-events: none;
 }
+.avatar {
+  position: absolute;
+  bottom: 0;
+}
+.parent {
+  display: flex;
+
+}
+.child {
+  vertical-align:bottom;
+}
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 0s linear;
   }
 }
+.
+.rs-content{
 
+}
 .App-header {
-  background-color: #282c34;
+  background-color: #3c3d41;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,4 +50,192 @@
   to {
     transform: rotate(360deg);
   }
+}
+article {
+  float: left;
+  padding: 20px;
+  width: 70%;
+  background-color: #f1f1f1;
+  height: 300px; /* only for demonstration, should be removed */
+}
+.div1 {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+
+.box{
+
+  position: fixed;
+  height: 100%;
+  width: 100%;
+
+}
+
+.custom-slider{
+  height: 10px;
+}
+
+.box2{
+
+  background-size:100% 100%;
+  position: fixed;
+  height: calc(100% - 100px);
+  width: calc(100% - 55px);
+}
+
+.box3{
+  background-image: url("https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77700422093.jpg");
+  background-size:100% 100%;
+  background-color: #5c6681;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+.box4{
+
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+.box5{
+
+  position: fixed;
+  height: calc(100% - 100px);
+  width: calc(100% - 55px);
+  overflow-y: auto;
+  float:left;
+
+}
+.box6{
+  position: absolute;
+  width: 100%;
+  overflow: auto;
+  height: calc(100% - 150px);
+
+}
+
+.box7{
+
+  position: absolute;
+  height: 150px;
+  bottom: 5px;
+  width: calc(100% - 5px);
+
+}
+.box8{
+
+  background-size:100% 100%;
+  position: fixed;
+  height: 100%;
+  width: calc(100% - 55px);
+}
+
+
+html::-webkit-scrollbar {
+  width: 20px;
+}
+
+html::-webkit-scrollbar-track {
+  background-color: black;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: #4e4e4e;
+  border-radius: 25px;
+}
+
+.sidenav {
+  background-color: #1b1d24; /* Full-height: remove this if you want "auto" height */
+  width: 50px; /* Set the width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: #1d425e; /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+}
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: flex;
+}
+:root {
+  color-scheme: dark;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.App {
+  margin-left: 70px; /* Same as the width of the sidenav */
+
+
+}
+.Login{
+  position: absolute;
+  bottom: 0;
+}
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+.test1{
+  background-color: #25272c;
+  width: 400px;
+  height: 100%;
+  align-items: stretch;
+  float: left;
+}
+
+.test2 {
+  background-color: #303238;
+  width: calc(100% - 400px);
+  height: calc(100% - 50px);
+  align-items: stretch;
+  float: right;
+  overflow: auto;
+}
+
+.stepper{
+  margin-right: 65px;
+  margin-left: 65px;
+  margin-top: 10px;
+}
+
+.header{
+  height: 85px;
+  margin-top: 10px;
+}
+
+.box9{
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  height: calc(100% - 520px);
+  overflow-y: auto;
+}
+
+.button{
+  margin-right: 180px;
+  left: 200px;
+}
+
+.widget{
+  overflow-y: hidden;
+  height: 185px;
+}
+
+.dateSelect{
+  width: 100%;
+  margin-top: 0;
+  top: 0;
+  height: calc(100% - 375px);
+
 }
