@@ -24,7 +24,8 @@
     animation: App-logo-spin infinite 0s linear;
   }
 }
-.
+
+
 .rs-content{
 
 }
@@ -62,6 +63,7 @@ article {
   position: fixed;
   height: 100%;
   width: 100%;
+  background-color: #1b1d24;
 }
 
 .box{
@@ -93,10 +95,11 @@ article {
   width: 100%;
 }
 .box4{
-
+  background-color: #0f1013;
   position: fixed;
   height: 100%;
   width: 100%;
+  border-top-left-radius: 20px;
 }
 .box5{
 
@@ -109,41 +112,30 @@ article {
 }
 .box6{
   position: absolute;
-  width: 100%;
+  width: calc(100% - 15px);
   overflow: auto;
-  height: calc(100% - 150px);
+  height: calc(100% - 190px);
 
 }
 
 .box7{
-
   position: absolute;
-  height: 150px;
-  bottom: 5px;
-  width: calc(100% - 5px);
-
+  height: 135px;
+  bottom: 10px;
+  width: calc(100% - 15px);
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
 }
 .box8{
-
+  background-color: #21D4FD;
+  background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 255, 216, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
   background-size:100% 100%;
   position: fixed;
-  height: 100%;
+  height: calc(100% - 55px);
   width: calc(100% - 55px);
 }
 
 
-html::-webkit-scrollbar {
-  width: 20px;
-}
-
-html::-webkit-scrollbar-track {
-  background-color: black;
-}
-
-html::-webkit-scrollbar-thumb {
-  background: #4e4e4e;
-  border-radius: 25px;
-}
 
 .sidenav {
   background-color: #1b1d24; /* Full-height: remove this if you want "auto" height */
@@ -152,7 +144,6 @@ html::-webkit-scrollbar-thumb {
   z-index: 1; /* Stay on top */
   top: 0; /* Stay at the top */
   left: 0;
-  background-color: #1d425e; /* Black */
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 20px;
 }
@@ -163,10 +154,6 @@ html::-webkit-scrollbar-thumb {
   color: #818181;
   display: flex;
 }
-:root {
-  color-scheme: dark;
-}
-
 .sidenav a:hover {
   color: #f1f1f1;
 }
@@ -188,18 +175,51 @@ html::-webkit-scrollbar-thumb {
 .test1{
   background-color: #25272c;
   width: 400px;
-  height: 100%;
-  align-items: stretch;
+  height: calc(100% - 20px);
   float: left;
+
+
 }
 
 .test2 {
-  background-color: #303238;
   width: calc(100% - 400px);
-  height: calc(100% - 50px);
+  height: calc(100% - 20px);
   align-items: stretch;
   float: right;
   overflow: auto;
+
+}
+
+.test3 {
+  width: calc(100% - 15px);
+  height: calc(100% - 20px);
+  align-items: stretch;
+  overflow: auto;
+}
+.chart-wrapper {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+.test4 {
+  width: calc(100% - 15px);
+  height: calc(100% - 20px);
+  margin-left: 5px;
+  align-items: stretch;
+  overflow: auto;
+
+}
+
+
+.budgetScrollable {
+  width: calc(100% - 400px);
+  height: calc(100% - 0px);
+  align-items: stretch;
+  float: right;
+  overflow: auto;
+
 }
 
 .stepper{
@@ -214,28 +234,90 @@ html::-webkit-scrollbar-thumb {
 }
 
 .box9{
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  height: calc(100% - 520px);
+  margin: 20px 20px 10px;
+  height: calc(100% - 460px);
   overflow-y: auto;
 }
 
-.button{
-  margin-right: 180px;
-  left: 200px;
+.box10{
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  height: calc(100%);
+  overflow-y: auto;
 }
 
 .widget{
   overflow-y: hidden;
   height: 185px;
+
 }
 
 .dateSelect{
   width: 100%;
   margin-top: 0;
   top: 0;
-  height: calc(100% - 375px);
+  height: 275px;
+  background-color: #2c2c38;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
 
+.categoryTab{
+  height: 200px;
+  background-color: #23232d;
+  overflow-y: auto;}
+
+.chart{
+  width: 100%;
+  background-color: #1d1d25;
+}
+
+.feedback{
+  width: calc(100%- 40px);
+  height: calc(100% - 482px);
+  background-color: #292934;
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+  overflow-y: auto;
+  margin-left: 20px;
+  margin-right: 20px ;
+}
+.feedbackList{
+  width: 100%;
+  height: 35px;
+  background-color: #292934;
+}
+.vertical-center {
+}
+
+.auth{
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background-color: #0c1e35;
+  background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 255, 216, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
+  background-size: 100% 100%;
+
+  overflow-y: auto;
+
+}
+
+.inner{
+  position: relative;
+  min-height: 400px;
+  width: 500px;
+  margin-top: 50px;
+  overflow-y: auto;
+}
+
+.logodiv{
+  height: 50px;
+  width: 275px;
+  background: linear-gradient(#595959, #101010);
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px
+}
+:root {
+  color-scheme: dark;
 }

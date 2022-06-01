@@ -5,9 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "rsuite/dist/rsuite.min.css";
 
+import {persistor, store} from "./redux/store";
+
+import { Provider } from "react-redux";
+import {PersistGate} from "redux-persist/integration/react";
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+      <Provider store={store}>
+            <App />
+      </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
