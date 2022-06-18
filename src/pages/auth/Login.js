@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import { getAuth, signInWithEmailAndPassword, setPersistence } from "firebase/auth";
-import {Button, IconButton, ButtonToolbar, Divider, Form, InputGroup, Panel, Schema} from "rsuite";
+import React from "react";
+import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import {Button, IconButton, ButtonToolbar, Divider, Form, Panel, Schema, Checkbox} from "rsuite";
 import {useNavigate} from "react-router-dom";
 import {FcGoogle} from "react-icons/fc";
 import {Button as ButtonMUI} from '@mui/material';
 import SignIn from "@rsuite/icons/legacy/SignIn";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {toggleAuth} from "../../redux/slice/authSlice";
-import {addDataToState, firebaseTest, getAndSetUserDataFromFireStore} from './firebase'
+import {getAndSetUserDataFromFireStore} from './firebase'
 import {setRetirementCalcData401K} from "../../redux/slice/userDataSlice";
-
 
 
 const {StringType} = Schema.Types;
@@ -23,15 +22,15 @@ const model = Schema.Model({
 });
 
 function TextField(props) {
-    const {name, label, accepter, ...rest} = props;
+    const {name, label, accepter, help, ...rest} = props;
     return (
         <Form.Group controlId={`${name}-3`}>
             <Form.ControlLabel>{label} </Form.ControlLabel>
             <Form.Control name={name} accepter={accepter} {...rest} />
+            <Form.HelpText>{help}</Form.HelpText>
         </Form.Group>
     );
 }
-
 
 
 const Login = () => {
@@ -43,10 +42,6 @@ const Login = () => {
     });
     const [visible, setVisible] = React.useState(false);
 
-    const handleChange = () => {
-        setVisible(!visible);
-    };
-
     let navigate = useNavigate();
 
     const auth = getAuth();
@@ -55,22 +50,25 @@ const Login = () => {
 
 
     const handleLogin = () => {
+
         signInWithEmailAndPassword(auth, formValue.email, formValue.password)
             .then(async (userCredential) => {
                 const user = userCredential.user;
-                dispatch(toggleAuth(true))
-                console.log("Signed in user: ", user);
                 await getAndSetUserDataFromFireStore(user.uid).then((value) => {
                     dispatch(setRetirementCalcData401K(value))
                 })
+
+                console.log("Signed in user: ", user);
+
                 localStorage.setItem("Authenticated", true);
+                dispatch(toggleAuth(true))
                 navigate("/app/dashboard")
 
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log("An error occured: ", errorCode, errorMessage);
+                console.log("An error occurred: ", errorCode, errorMessage);
             });
 
     };
@@ -85,11 +83,13 @@ const Login = () => {
         // If the user presses the "Enter" key on the keyboard
         if (event.key === "Enter") {
             console.log("Enter Pressed")
-            if(formValue.password !== "" & formValue.email !== "")
+            if (formValue.password !== "" && formValue.email !== "")
                 handleLogin()
             else
                 console.error("Username or password is not entered")
-        }}
+        }
+    }
+
     return (
         <div>
             <center>
@@ -104,13 +104,18 @@ const Login = () => {
                 <Form ref={formRef}
                       onChange={setFormValue}
                       onCheck={setFormError}
+                      formError={formError}
                       formValue={formValue}
                       model={model}>
                     <TextField name="email" label="Email"/>
-                    <TextField name="password" label="Password" type={"password"} placeholder={"password"} onKeyPress={pressed}   />
+                    <TextField name="password" label="Password" type={visible ? 'text' : 'password'} help={
+                        <Checkbox style={{translate: "30"}} onChange={(value, checked) => {
+                            checked ? setVisible(true) : setVisible(false)
+                        }}> Show Password</Checkbox>
+                    } placeholder={"password"} onKeyPress={pressed}/>
 
                     <ButtonToolbar>
-                        <IconButton appearance= "primary" onClick={handleLogin} icon={<SignIn/>}>Sign in</IconButton>
+                        <IconButton appearance="primary" onClick={handleLogin} icon={<SignIn/>}>Sign in</IconButton>
                         <Button appearance="link" onClick={handleOnClick}>Forgot password?</Button>
                         <Button appearance="link" onClick={handleOnSignupClick}>Register</Button>
                     </ButtonToolbar>

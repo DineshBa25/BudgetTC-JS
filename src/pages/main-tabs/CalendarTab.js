@@ -197,7 +197,7 @@ const CalendarTab = () => {
     return (
         <div className={"box8"}>
             <div className="test1" style={{
-                background: themeSet === "dark" ? "#292934" : "#ececf1",
+                background: themeSet === "dark" ? "rgba(21,23,31,0.89)" : "#ececf1",
                 marginLeft: 10,
                 marginTop: 10,
                 marginBottom: 10,
@@ -233,11 +233,11 @@ const CalendarTab = () => {
             </div>
 
             <div className="test2" style={{
-                background: themeSet === "dark" ? "rgba(30,31,40,0.8)" : "#f8f8f8",
+                background: themeSet === "dark" ? "rgba(21,23,31,0.65)" : "#f8f8f8",
                 marginTop: 10,
                 marginBottom: 10,
-                marginLeft: 0,
-                width: "calc(100% - 410px)",
+                marginRight: 10,
+                width: "calc(100% - 420px)",
                 height: "calc(100%- 800px)",
                 borderRadius: 7
             }}>

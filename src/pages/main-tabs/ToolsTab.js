@@ -1,59 +1,47 @@
-import React, {useEffect, useState} from 'react';
-import Typography from "@mui/material/Typography";
+import React from "react";
 import {
-    Badge,
     Button,
-    ButtonToolbar,
-    Calendar, Checkbox, CheckboxGroup,
+    ButtonToolbar, Checkbox, CheckboxGroup,
     Divider,
     Dropdown,
-    Form,
-    IconButton, Input, InputGroup,
-    InputNumber,
-    Nav, Panel, Schema,
+    Form, Input,
+    InputNumber, Panel, Schema,
     Table,
     Stack
 } from "rsuite";
-import List from "rsuite/List";
-import EditIcon from "@rsuite/icons/Edit";
-import App from "../../App";
-import themeSet from "../../App";
-import {ReflexContainer, ReflexElement, ReflexSplitter} from "react-reflex";
-import Box from "@mui/material/Box";
-import {createTheme, Fab, Skeleton, SpeedDial, Stack as StackMUI} from "@mui/material";
-import {Add, ImportExportRounded, Print} from "@mui/icons-material";
-import {CompanyProfile, MiniChart, TechnicalAnalysis} from "react-tradingview-embed";
-import SI from "nodejs-stock-info";
 import Chart from "react-apexcharts";
-import Utils, {CHART_COLORS, rand} from "react-toolbox/components/utils";
-import {TextArea} from "@patternfly/react-core";
 import {ValueType} from "rsuite/Radio";
+import {store} from "../../redux/store";
+import {setUserDataInFireStore} from "../auth/firebase";
+import {AutoAffordabilityCalcInput, AutoAffordabilityCalcView} from "./AutoAffordabilityCalc";
 
 
-let theme = "dark"
+let theme = "dark";
+
 
 function ToolsTab() {
     const [activeWhichCalc, setActiveWhichCalc] = React.useState('Select a Calculator');
     const [activeFormData, setActiveFormData] = React.useState('No data');
     return (
         <div className={"box8"}>
-        <div className="test1"  style={{background: theme === "dark"? "rgba(21,23,31,0.89)": "#ececf1", marginLeft: 10, marginTop:10, marginBottom: 10, width: 390, borderRadius: 7}}>
+        <div className="test1"  style={{background: theme === "dark"? "rgba(21,23,31,0.96)": "#ececf1", marginLeft: 10, marginTop:10, marginBottom: 10, width: 390, borderRadius: 7}}>
             <center>
                 <Dropdown title={activeWhichCalc} size={"lg"} activeKey="a" color={"#fff"} onSelect={setActiveWhichCalc} appearance="ghost" style={{marginTop:15}}>
                     <Dropdown.Item eventKey="Retirement Calculator (Roth 401K)"><b>Retirement Calculator (Roth 401K)</b></Dropdown.Item>
                     <Dropdown.Item eventKey="Investment Calculator">Investment Calculator</Dropdown.Item>
                     <Dropdown.Item eventKey="Loan Payment Calculator">Loan Payment Calculator</Dropdown.Item>
                     <Dropdown.Item eventKey="Split Expenses Calculator">Split Expenses Calculator</Dropdown.Item>
+                    <Dropdown.Item eventKey="Auto Affordability Calculator">Auto Affordability Calculator</Dropdown.Item>
                 </Dropdown>
             </center>
             <hr style={{marginBottom: 0}}/>
-            <div style={{ height: "calc(100% - 78px)", marginTop: 0, overflowY: "auto", paddingTop: 20, paddingBottom: 20}}>
-                <WhichCalc activeWhichCalc={activeWhichCalc}  setActiveFormData={setActiveFormData}></WhichCalc>
+            <div  className={"vScrollGradient"} style={{ height: "calc(100% - 78px)", marginTop: 0, overflowY: "auto", paddingTop: 20, paddingBottom: 20}}>
+                <WhichCalc activeWhichCalc={activeWhichCalc}  setActiveFormData={setActiveFormData}/>
             </div>
             </div>
 
         <div className="test2" style={{background: theme === "dark"? "rgba(30,31,40,0.8)": "#f8f8f8", marginTop: 10, marginBottom:10, marginLeft:0, marginRight: 10, width: "calc(100% - 420px)", height: "calc(100%- 800px)",borderRadius: 7}}>
-            <WhichInfoDisplay activeWhichCalc={activeWhichCalc} activeFormData={activeFormData}></WhichInfoDisplay>
+            <WhichInfoDisplay activeWhichCalc={activeWhichCalc} activeFormData={activeFormData}/>
         </div>
 
     </div>
@@ -68,6 +56,10 @@ function WhichCalc({activeWhichCalc, setActiveFormData}){
             <RetirementCalculator setActiveFormData={setActiveFormData}/>
         )
     }
+    else if(activeWhichCalc === "Auto Affordability Calculator"){
+        return(
+            <AutoAffordabilityCalcInput setActiveFormData={setActiveFormData}/>);
+    }
     else return(
         <center>
             <h5>Select a calculator above.</h5>
@@ -79,6 +71,11 @@ function WhichInfoDisplay({activeWhichCalc, activeFormData}){
     if(activeWhichCalc === "Retirement Calculator (Roth 401K)"){
         return(
             <InvestmentInfoDisplay activeFormData={activeFormData}/>
+        )
+    }
+    else if(activeWhichCalc === "Auto Affordability Calculator") {
+        return (
+            <AutoAffordabilityCalcView/>
         )
     }
     else return(
@@ -107,14 +104,11 @@ const model = Schema.Model({
         .max(25, "Enter a salary growth below 25%"),
     ContributionOfSalary: NumberType("Please enter the a valid percentage"),
     ExpectedContribution: StringType()
-        .addRule((value, data) => {
+        .addRule((value) => {
             console.log(value.toString());
 
-            if (value.toString() > 2000) {
-                return false;
-            }
+            return value.toString() !== 'Maxed' && value.toString() <= 2000;
 
-            return true;
         }, 'You cannot contribute more than $2000')
         .isRequired('This field is required.'),
     ExpectedReturn: NumberType()
@@ -148,8 +142,8 @@ function RetirementCalculator({setActiveFormData}){
         const [maxed, setMaxed] = React.useState(false);
         const [byPercent, setByPercent] = React.useState(false);
         const [adjustForInflation, setAdjustForInflation] = React.useState(false);
-        const [formValue, setFormValue] = React.useState({
-            CurrentAge: '22',
+        const [formValue, setFormValue] = React.useState(
+            /*CurrentAge: '22',
             RetirementAge: '55',
             CurrentSavings: '3200',
             Salary: '68000',
@@ -159,8 +153,9 @@ function RetirementCalculator({setActiveFormData}){
             EmployerMatchUpTo: '0',
             ExpectedContribution: '500',
             ExpectedReturn: '9',
-            ExpectedInflation: '2.5',
-        });
+            ExpectedInflation: '2.5',*/
+            store.getState().userData.userDataDocument.tools.retirementCalcR401K
+        );
 
         const handleSubmit = () => {
             if (!formRef.current.check()) {
@@ -169,6 +164,8 @@ function RetirementCalculator({setActiveFormData}){
             }
             console.log(formValue, 'Form Value');
             setActiveFormData(formValue)
+            console.log("attempting to submit to firestore")
+            setUserDataInFireStore({tools: {retirementCalcR401K: formValue}})
 
         };
 
@@ -179,6 +176,7 @@ function RetirementCalculator({setActiveFormData}){
                         onChange={setFormValue}
                         onCheck={setFormError}
                         formValue={formValue}
+                        formError={formError}
                         model={model}
                         layout={"horizontal"}
                     >
@@ -196,7 +194,7 @@ function RetirementCalculator({setActiveFormData}){
 
                         <center>
                         <CheckboxGroup style={{width: 200, transform: "translate(0px, -25px)"}}>
-                            <Checkbox value="Max?" onChange={ (value: ValueType, checked: boolean, event) => {
+                            <Checkbox value="Max?" onChange={ (value: ValueType, checked: boolean) => {
                                 if(checked){
                                     console.log("Removing Expected Contribution Input")
                                     setMaxed(true)
@@ -207,7 +205,7 @@ function RetirementCalculator({setActiveFormData}){
                                     setMaxed(false)
                                 }
                             }}>Max 401k Contribution</Checkbox>
-                            <Checkbox value="contributionType"  onChange={ (value: ValueType, checked: boolean, event) => {
+                            <Checkbox value="contributionType"  onChange={ (value: ValueType, checked: boolean) => {
                                 if(checked){
                                     console.log("Removing By Salary Percent Input")
                                     setByPercent(true)
@@ -221,7 +219,7 @@ function RetirementCalculator({setActiveFormData}){
                         </center>
                         <TextField name="ExpectedReturn" label="Expected Return" accepter={InputNumber} postfix={"%"} />
                         <CheckboxGroup style={{width: 200, transform: "translate(0px, -10px)"}}>
-                            <Checkbox value="Max?" onChange={ (value: ValueType, checked: boolean, event) => {
+                            <Checkbox value="Max?" onChange={ (value: ValueType, checked: boolean) => {
                                 if(checked){
                                     setAdjustForInflation(true)
                                     formValue.ExpectedInflation= '2.5'
@@ -241,6 +239,7 @@ function RetirementCalculator({setActiveFormData}){
 
                         </ButtonToolbar>
                     </Form>
+
 </center>
         );
 
@@ -248,21 +247,21 @@ function RetirementCalculator({setActiveFormData}){
 
 function InvestmentInfoDisplay({activeFormData}){
     console.log(activeFormData)
-    var total = parseInt(activeFormData.CurrentSavings);
-    var inflatedTotal = parseInt(activeFormData.CurrentSavings);
-    var ageRange = parseInt(activeFormData.RetirementAge) -parseInt(activeFormData.CurrentAge)
-    let inflatedCalculations = new Array()
-    let calculations = new Array()
-    let contributionsArray = new Array()
-    let employerContributionsArray = new Array()
-    let salaryArray = new Array()
+    let total = parseInt(activeFormData.CurrentSavings);
+    let inflatedTotal = parseInt(activeFormData.CurrentSavings);
+    let ageRange = parseInt(activeFormData.RetirementAge) -parseInt(activeFormData.CurrentAge)
+    let inflatedCalculations = []
+    let calculations = []
+    let contributionsArray = []
+    let employerContributionsArray = []
+    let salaryArray = []
     let limit = 0
     let contribution = 0
     let adjustedSalary =  0
     let employerContribution = 0
     for(let i = 1; i <= ageRange; i++)
     {
-        if(i<55-activeFormData.CurrentAge)
+        if(i<50-activeFormData.CurrentAge)
             limit = 20500
         else
             limit = 27000
@@ -306,7 +305,7 @@ function InvestmentInfoDisplay({activeFormData}){
 
     const labels = Array.from({length: ageRange}, (v, k) => k + (parseInt(activeFormData.CurrentAge)+1))
 
-    var state = {
+    let state = {
         options: {
             chart: {
                 id: "line",
@@ -315,15 +314,15 @@ function InvestmentInfoDisplay({activeFormData}){
                 ,
                 animations: {
                     enabled: true,
-                    easing: 'easeinout',
-                    speed: 1700,
+                    easing: 'easein',
+                    speed: 1500,
                     animateGradually: {
                         enabled: true,
-                        delay: 1000
+                        delay: 1500
                     },
                     dynamicAnimation: {
                         enabled: true,
-                        speed: 1700
+                        speed: 350
                     }
                 }
             },
@@ -388,7 +387,7 @@ function InvestmentInfoDisplay({activeFormData}){
         ]
     };
 
-    var state1 = {
+   let state1 = {
         options: {
             chart: {
                 id: "line",
@@ -462,7 +461,7 @@ function InvestmentInfoDisplay({activeFormData}){
             }
         ]
     };
-    var formatter = new Intl.NumberFormat('en-US', {
+    let formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
 
@@ -470,8 +469,6 @@ function InvestmentInfoDisplay({activeFormData}){
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
         //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
     });
-    let calculationsArray = inflatedCalculations.toString()
-
     let tableData = [
         {
             "id": "Your Contributions",
@@ -509,7 +506,7 @@ function InvestmentInfoDisplay({activeFormData}){
                     <h8>As a baseline, during retirement you can withdraw about <b>{formatter.format(total*0.05)}</b> every year. With annual inflation at <b>{activeFormData.ExpectedInflation}% </b> that becomes about <b>{formatter.format(inflatedTotal*0.05)}</b>.</h8>
     <hr/>
                     <label>Withdrawal Percent:</label>
-                    <InputNumber postfix={"%"} value={5} style={{width: 150}}></InputNumber>
+                    <InputNumber postfix={"%"} value={5} style={{width: 150}}/>
                 </Panel>
                 <Panel header={"Salary & Contribution"} bordered style={{maxWidth:500, background: "rgba(0,0,0,0.24)"}}>
                     <Chart

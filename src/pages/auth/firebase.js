@@ -1,30 +1,13 @@
 import React from "react";
-import {initializeApp} from "firebase/app";
-import {getFirestore} from "firebase/firestore";
-import {collection, addDoc, setDoc, doc, getDoc} from "firebase/firestore";
-import {db} from "../../configs/firebaseConfig";
+import {setDoc, doc, getDoc,  updateDoc} from "firebase/firestore";
 
-import {setRetirementCalcData401K} from "../../redux/slice/userDataSlice";
-import {useDispatch} from "react-redux";
+import {db} from "../../configs/firebaseConfig";
 
 //todo make firestore database rules secure. firebase.google.com/docs/firestore/security/get-started
 
-export async function firebaseTest() {
-    try {
-        const docRef = await addDoc(collection(db, "users"), {
-            first: "Ada",
-            last: "Lovelace",
-            born: 1815
-        });
-        console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-        console.error("Error adding document: ", e);
-    }
-}
-
 export async function registerUserToFireStore(uid, info) {
     try {
-        const docRef = await setDoc(doc(db, "users", uid), {
+        await setDoc(doc(db, "users", uid), {
             userInformation: {
                 email: info.email,
                 accountPicture: "https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/avatars-000313365814-bb3cvf-t240x240.jpg?alt=media&token=bd971fbb-121d-442c-be09-5a64986c4f84"
@@ -35,11 +18,11 @@ export async function registerUserToFireStore(uid, info) {
                 backgroundImage: "https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac",
             },
             budget: {
-                "Transportation" : {
+                "Transportation": {
                     fullName: "Transportation",
                     color: "#ffff00",
                     items: {
-                        "Roadside Assistance" : {
+                        "Roadside Assistance": {
                             "fullName": "AAA Roadside Assistance",
                             "amount": "undefined",
 
@@ -62,29 +45,30 @@ export async function registerUserToFireStore(uid, info) {
                             "fullName": "Auto Payment",
                             "amount": "undefined",
                         },
-                        "Car Insurance":{
+                        "Car Insurance": {
                             "fullName": "Car Insurance",
                             "amount": "undefined",
                         }
-                    }},
-                "Personal and Fun Money":{
-                    "Amazon Subscription":{
+                    }
+                },
+                "Personal and Fun Money": {
+                    "Amazon Subscription": {
                         "fullName": "Amazon Subscription",
                         "amount": "undefined",
                     },
-                    "Bali Vacation Fund":{
+                    "Bali Vacation Fund": {
                         "fullName": "Bali Vacation Fund",
                         "amount": "undefined",
                     },
-                    "Hulu Subscription":{
+                    "Hulu Subscription": {
                         "fullName": "Hulu Subscription",
                         "amount": "undefined",
                     },
-                    "LastPass Subscription":{
+                    "LastPass Subscription": {
                         "fullName": "LastPass Subscription",
                         "amount": "undefined",
                     },
-                    "Technology Fund":{
+                    "Technology Fund": {
                         "fullName": "Technology Fund",
                         "amount": "undefined",
                     },
@@ -93,7 +77,7 @@ export async function registerUserToFireStore(uid, info) {
                         "amount": "undefined",
                     }
                 },
-                "Food" : {
+                "Food": {
                     "Food": {
                         "fullName": "Food",
                         "amount": "undefined",
@@ -115,7 +99,7 @@ export async function registerUserToFireStore(uid, info) {
                         "amount": "undefined",
                     },
                 },
-                "Clothing":{
+                "Clothing": {
                     "Personal Clothing": {
                         "fullName": "Personal Clothing",
                         "amount": "undefined",
@@ -147,7 +131,7 @@ export async function registerUserToFireStore(uid, info) {
                     }
 
                 },
-                "Gift, Charity, and Donations":{
+                "Gift, Charity, and Donations": {
 
                     "American Red Cross Donation": {
                         "fullName": "American Red Cross Donation",
@@ -168,7 +152,7 @@ export async function registerUserToFireStore(uid, info) {
                         "amount": "undefined",
                     }
                 },
-                "Housing":{
+                "Housing": {
 
                     "Home Security System": {
                         "fullName": "Home Security System",
@@ -219,7 +203,7 @@ export async function registerUserToFireStore(uid, info) {
                         "amount": "undefined",
                     },
                 },
-                "Medical":{
+                "Medical": {
 
                     "Eye Contacts": {
                         "fullName": "Eye Contacts",
@@ -249,14 +233,11 @@ export async function registerUserToFireStore(uid, info) {
                     ExpectedReturn: '',
                     ExpectedInflation: '',
                 },
-                autoAffordabilityCalc: {
-
-                },
-                loanPayoffCalculator:{
-
-                },
-                splitExpensesCalculator:{}
-            }
+                autoAffordabilityCalc: {},
+                loanPayoffCalculator: {},
+                splitExpensesCalculator: {}
+            },
+            quote: "0"
         });
         console.log("Document written with ID: ", uid);
     }
@@ -276,4 +257,34 @@ export async function getAndSetUserDataFromFireStore(uid) {
     catch (e) {
         console.error("Error retrieving document: ", e);
     }
+}
+
+
+export async function updateUserDataInFireStore(replacement){
+    let uid = "uvMQqARvvTYNXTcv53uooInwYjt1"
+    const docRef = doc(db, "users", uid);
+
+    await updateDoc(docRef,
+        replacement
+    )
+        .then(() => {
+        console.log(`Document updated Successfully `)})
+    .catch(err => {
+            console.error(err)
+        });
+
+}
+export async function setUserDataInFireStore(replacement){
+    let uid = "uvMQqARvvTYNXTcv53uooInwYjt1"
+    const docRef = doc(db, "users", uid);
+
+    await setDoc(docRef,
+        replacement
+    , { merge: true })
+        .then(() => {
+            console.log(`Document updated Successfully `)})
+        .catch(err => {
+            console.error(err)
+        });
+
 }

@@ -1,323 +1,384 @@
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+    height: 40vmin;
+    pointer-events: none;
 }
+
 .avatar {
-  position: absolute;
-  bottom: 0;
+    position: absolute;
+    bottom: 0;
 }
+
 .parent {
-  display: flex;
+    display: flex;
 
 }
+
 .child {
-  vertical-align:bottom;
+    vertical-align: bottom;
 }
 
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 0s linear;
-  }
+    .App-logo {
+        animation: App-logo-spin infinite 0s linear;
+    }
 }
 
 
-.rs-content{
+.rs-content {
 
 }
+
 .App-header {
-  background-color: #3c3d41;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #3c3d41;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
+
 article {
-  float: left;
-  padding: 20px;
-  width: 70%;
-  background-color: #f1f1f1;
-  height: 300px; /* only for demonstration, should be removed */
+    float: left;
+    padding: 20px;
+    width: 70%;
+    background-color: #f1f1f1;
+    height: 300px; /* only for demonstration, should be removed */
 }
+
 .div1 {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  background-color: #1b1d24;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: #1b1d24;
 }
 
-.box{
+.box {
 
-  position: fixed;
-  height: 100%;
-  width: 100%;
-
-}
-
-.custom-slider{
-  height: 10px;
-}
-
-.box2{
-
-  background-size:100% 100%;
-  position: fixed;
-  height: calc(100% - 100px);
-  width: calc(100% - 55px);
-}
-
-.box3{
-  background-image: url("https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77700422093.jpg");
-  background-size:100% 100%;
-  background-color: #5c6681;
-  position: fixed;
-  height: 100%;
-  width: 100%;
-}
-.box4{
-  background-color: #0f1013;
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  border-top-left-radius: 20px;
-}
-.box5{
-
-  position: fixed;
-  height: calc(100% - 100px);
-  width: calc(100% - 55px);
-  overflow-y: auto;
-  float:left;
-
-}
-.box6{
-  position: absolute;
-  width: calc(100% - 15px);
-  overflow: auto;
-  height: calc(100% - 190px);
+    position: fixed;
+    height: 100%;
+    width: 100%;
 
 }
 
-.box7{
-  position: absolute;
-  height: 135px;
-  bottom: 10px;
-  width: calc(100% - 15px);
-  border-bottom-left-radius: 7px;
-  border-bottom-right-radius: 7px;
-}
-.box8{
-  background-color: #21D4FD;
-  background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 255, 216, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
-  background-size:100% 100%;
-  position: fixed;
-  height: calc(100% - 55px);
-  width: calc(100% - 55px);
+.custom-slider {
+    height: 10px;
 }
 
+.box2 {
+
+    background-size: 100% 100%;
+    position: fixed;
+    height: calc(100% - 100px);
+    width: calc(100% - 55px);
+}
+
+.box3 {
+    background-image: url("https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77700422093.jpg");
+    background-size: 100% 100%;
+    background-color: #5c6681;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+.box4 {
+    background-color: #0f1013;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    border-top-left-radius: 20px;
+}
+
+.box5 {
+
+    position: fixed;
+    height: calc(100% - 100px);
+    width: calc(100% - 55px);
+    overflow-y: auto;
+    float: left;
+
+}
+
+.box6 {
+    position: absolute;
+    width: calc(100% - 15px);
+    overflow: auto;
+    height: calc(100% - 190px);
+
+}
+
+.box7 {
+    position: absolute;
+    height: 135px;
+    bottom: 10px;
+    width: calc(100% - 15px);
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
+.box8 {
+    background-color: #21D4FD;
+    background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 255, 216, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
+    background-size: 100% 100%;
+    position: fixed;
+    height: calc(100% - 55px);
+    width: calc(100% - 55px);
+}
 
 
 .sidenav {
-  background-color: #1b1d24; /* Full-height: remove this if you want "auto" height */
-  width: 50px; /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 20px;
+    background-color: #1b1d24; /* Full-height: remove this if you want "auto" height */
+    width: 50px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
 }
+
 .sidenav a {
-  padding: 6px 8px 6px 16px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #818181;
-  display: flex;
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: flex;
 }
+
 .sidenav a:hover {
-  color: #f1f1f1;
+    color: #f1f1f1;
 }
 
 .App {
-  margin-left: 70px; /* Same as the width of the sidenav */
+    margin-left: 70px; /* Same as the width of the sidenav */
 
 
 }
-.Login{
-  position: absolute;
-  bottom: 0;
+
+.Login {
+    position: absolute;
+    bottom: 0;
 }
+
 @media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
+    .sidenav {
+        padding-top: 15px;
+    }
+
+    .sidenav a {
+        font-size: 18px;
+    }
 }
 
-.test1{
-  background-color: #25272c;
-  width: 400px;
-  height: calc(100% - 20px);
-  float: left;
+.test1 {
+    background-color: #25272c;
+    width: 400px;
+    height: calc(100% - 20px);
+    float: left;
 
 
 }
 
 .test2 {
-  width: calc(100% - 400px);
-  height: calc(100% - 20px);
-  align-items: stretch;
-  float: right;
-  overflow: auto;
+    width: calc(100% - 400px);
+    height: calc(100% - 20px);
+    align-items: stretch;
+    float: right;
+    overflow: auto;
 
 }
 
 .test3 {
-  width: calc(100% - 15px);
-  height: calc(100% - 20px);
-  align-items: stretch;
-  overflow: auto;
+    width: calc(100% - 15px);
+    height: calc(100% - 20px);
+    align-items: stretch;
+    overflow: auto;
 }
+
 .chart-wrapper {
-  width: 100%;
-  height: 100%;
-  display: block;
-  overflow: hidden;
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: hidden;
 }
 
 .test4 {
-  width: calc(100% - 15px);
-  height: calc(100% - 20px);
-  margin-left: 5px;
-  align-items: stretch;
-  overflow: auto;
+    width: calc(100% - 15px);
+    height: calc(100% - 20px);
+    margin-left: 5px;
+    align-items: stretch;
+    overflow: auto;
 
 }
 
 
 .budgetScrollable {
-  width: calc(100% - 400px);
-  height: calc(100% - 0px);
-  align-items: stretch;
-  float: right;
-  overflow: auto;
+    width: calc(100% - 400px);
+    height: calc(100% - 0px);
+    align-items: stretch;
+    float: right;
+    overflow: auto;
 
 }
 
-.stepper{
-  margin-right: 65px;
-  margin-left: 65px;
-  margin-top: 10px;
+.stepper {
+    margin-right: 65px;
+    margin-left: 65px;
+    margin-top: 10px;
 }
 
-.header{
-  height: 85px;
-  margin-top: 10px;
+.header {
+    height: 85px;
+    margin-top: 10px;
 }
 
-.box9{
-  margin: 20px 20px 10px;
-  height: calc(100% - 460px);
-  overflow-y: auto;
+.box9 {
+    margin: 20px 20px 10px;
+    height: calc(100% - 460px);
+    overflow-y: auto;
 }
 
-.box10{
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-bottom: 10px;
-  height: calc(100%);
-  overflow-y: auto;
+.box10 {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    height: calc(100%);
+    overflow-y: auto;
 }
 
-.widget{
-  overflow-y: hidden;
-  height: 185px;
+.widget {
+    overflow-y: hidden;
+    height: 185px;
 
 }
 
-.dateSelect{
-  width: 100%;
-  margin-top: 0;
-  top: 0;
-  height: 275px;
-  background-color: #2c2c38;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+.dateSelect {
+    width: 100%;
+    margin-top: 0;
+    top: 0;
+    height: 275px;
+    background-color: #2c2c38;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
-.categoryTab{
-  height: 200px;
-  background-color: #23232d;
-  overflow-y: auto;}
-
-.chart{
-  width: 100%;
-  background-color: #1d1d25;
+.categoryTab {
+    height: 200px;
+    background-color: #23232d;
+    overflow-y: auto;
 }
 
-.feedback{
-  width: calc(100%- 40px);
-  height: calc(100% - 482px);
-  background-color: #292934;
-  border-bottom-left-radius: 10px;
-  border-top-left-radius: 10px;
-  overflow-y: auto;
-  margin-left: 20px;
-  margin-right: 20px ;
+.chart {
+    width: 100%;
+    background-color: #1d1d25;
 }
-.feedbackList{
-  width: 100%;
-  height: 35px;
-  background-color: #292934;
+
+.feedback {
+    width: calc(100% - 40px);
+    height: calc(100% - 482px);
+    background-color: #292934;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    overflow-y: auto;
+    margin-left: 20px;
+    margin-right: 20px;
 }
+
+.feedbackList {
+    width: 100%;
+    height: 35px;
+    background-color: #292934;
+}
+
 .vertical-center {
 }
 
-.auth{
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  background-color: #0c1e35;
-  background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 255, 216, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
-  background-size: 100% 100%;
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
 
-  overflow-y: auto;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: rgba(112, 112, 112, 0.5);
+    border-radius: 20px;
+    border: transparent;
+}
+
+.auth {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: #0c1e35;
+    background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 255, 216, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
+    background-size: 100% 100%;
+
+    overflow-y: auto;
 
 }
 
-.inner{
-  position: relative;
-  min-height: 400px;
-  width: 500px;
-  margin-top: 50px;
-  overflow-y: auto;
+.inner {
+    position: relative;
+    min-height: 400px;
+    width: 500px;
+    margin-top: 50px;
+    overflow-y: auto;
 }
 
-.logodiv{
-  height: 50px;
-  width: 275px;
-  background: linear-gradient(#595959, #101010);
-  border-top-left-radius: 40px;
-  border-top-right-radius: 40px
+.logodiv {
+    height: 50px;
+    width: 275px;
+    background: linear-gradient(#595959, #101010);
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px
 }
+
 :root {
-  color-scheme: dark;
+    color-scheme: dark;
+}
+
+.scrollGradient {
+    background-image: linear-gradient(to right, #1b1d24, #1b1d24),
+    linear-gradient(to right, #1b1d24, #1b1d24),
+    linear-gradient(to right, rgb(0, 0, 0), rgba(255, 255, 255, 0)),
+    linear-gradient(to left, rgb(0, 0, 0), rgba(255, 255, 255, 0));
+    background-position: left center, right center, left center, right center;
+    background-repeat: no-repeat;
+    background-color: #1b1d24;
+    background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+    background-attachment: local, local, scroll, scroll;
+
+}
+
+.vScrollGradient {
+    background: linear-gradient(rgba(21, 23, 31, 0.8) 33%, rgba(234, 236, 240, 0)),
+    linear-gradient(rgba(234, 236, 240, 0), rgba(21, 23, 31, 0.83) 66%) 0 100%,
+    radial-gradient(farthest-side at 50% 0, rgb(0, 0, 0), rgba(0, 0, 0, 0)),
+    radial-gradient(farthest-side at 50% 100%, rgb(0, 0, 0), rgba(0, 0, 0, 0)) 0 100%;
+    background-color: rgba(234, 236, 240, 0);
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
+    background-size: 100% 150px, 100% 150px, 100% 50px, 100% 50px;
 }

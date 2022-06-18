@@ -1,20 +1,11 @@
-import React, {useState} from "react";
+import React from "react";
 import {getAuth, signOut} from "firebase/auth";
-import {Button, ButtonToolbar, Form, IconButton, Modal, Panel, Radio, Schema} from "rsuite";
+import {Button, ButtonToolbar, IconButton, Modal, Panel, Radio} from "rsuite";
 import {useNavigate} from "react-router-dom";
 import {Exit} from "@rsuite/icons";
 
 
 const Signout = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    const formRef = React.useRef();
-    const [formError, setFormError] = React.useState({});
-    const [formValue, setFormValue] = React.useState({
-        email: '',
-        password: ''
-    });
     let navigate = useNavigate();
 
     const handleOnClick = () => {
@@ -53,32 +44,31 @@ export function SignoutButton() {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log("An error occured signing out: ", errorCode, errorMessage);
+                console.log("An error occurred signing out: ", errorCode, errorMessage);
             })
     };
     const [open, setOpen] = React.useState(false);
-    const [backdrop, setBackdrop] = React.useState('static');
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     return (
         <div><ButtonToolbar>
-                <IconButton appearance="primary" color="red" icon={<Exit/>} onClick={handleOpen}>Sign-out</IconButton>
-            </ButtonToolbar>
-    <Modal backdrop={backdrop} keyboard={false} open={open} size="sm" onClose={handleClose}>
-        <Modal.Body>
-            <h4>Are you sure that you want to sign-out?</h4>
-            <Radio>Don't prompt for confirmation again</Radio>
-        </Modal.Body>
-        <Modal.Footer>
-            <Button onClick={handleSignout} appearance="primary" color={"red"}>
-                Yes, sign-out
-            </Button>
-            <Button onClick={handleClose} appearance="primary" >
-                No, take me back
-            </Button>
-        </Modal.Footer>
-    </Modal></div>
+            <IconButton appearance="primary" color="red" icon={<Exit/>} onClick={handleOpen}>Sign-out</IconButton>
+        </ButtonToolbar>
+            <Modal backdrop={"static"} keyboard={false} open={open} size="sm" onClose={handleClose}>
+                <Modal.Body>
+                    <h4>Are you sure that you want to sign-out?</h4>
+                    <Radio>Don't prompt for confirmation again</Radio>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleSignout} appearance="primary" color={"red"}>
+                        Yes, sign-out
+                    </Button>
+                    <Button onClick={handleClose} appearance="primary">
+                        No, take me back
+                    </Button>
+                </Modal.Footer>
+            </Modal></div>
     );
 }
 
