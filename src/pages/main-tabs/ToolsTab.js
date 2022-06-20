@@ -75,7 +75,7 @@ function WhichInfoDisplay({activeWhichCalc, activeFormData}){
     }
     else if(activeWhichCalc === "Auto Affordability Calculator") {
         return (
-            <AutoAffordabilityCalcView/>
+            <AutoAffordabilityCalcView activeFormData={activeFormData}/>
         )
     }
     else return(
