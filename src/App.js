@@ -6,8 +6,9 @@ import {
     CustomProvider,
     Sidenav,
     Nav,
-    Navbar, IconButton, Stack
+    Navbar, IconButton, Stack, Notification, useToaster, Message
 } from 'rsuite';
+
 import ModelIcon from '@rsuite/icons/Model';
 import {Dashboard} from "@rsuite/icons";
 import CalendarIcon from '@rsuite/icons/Calendar';
@@ -30,19 +31,21 @@ import Reset from "./pages/auth/Reset";
 import {onAuthStateChanged} from "firebase/auth";
 import {useSelector, useDispatch} from "react-redux";
 import {saveUser} from "./redux/slice/authSlice";
-import {setQuote, setRetirementCalcData401K} from "./redux/slice/userDataSlice";
+import {setQuote, setRetirementCalcData401K} from "./pages/userDataSlice";
 import Signout from "./pages/auth/Signout";
 import PageNotFound from "./pages/auth/PageNotFound";
 import ProtectedRoute from "./utilities/ProtectedRoute";
 import LearnTab from "./pages/main-tabs/LearnTab";
 import DashboardTab from "./pages/main-tabs/Dashboard/Dashboard"
-import BudgetTab from "./pages/main-tabs/BudgetTab";
 import CalendarTab from "./pages/main-tabs/CalendarTab";
 import {auth} from "./configs/firebaseConfig";
 import ReloadIcon from '@rsuite/icons/Reload';
 import {updateUserDataInFireStore} from "./pages/auth/firebase";
 import GearIcon from "@rsuite/icons/Gear";
 import {RingLoader} from "react-spinners";
+import {store} from "./redux/store";
+import BudgetClass from "./pages/main-tabs/BudgetClass";
+import {SiTestin} from "react-icons/si";
 
 let themeSet = "dark";
 
@@ -65,7 +68,13 @@ function App() {
         },
     });
 
+    const toaster = useToaster();
 
+    const quoteMessage = (
+        <Message type={'success'} closable>
+            <p>Your quote has been changed</p>
+        </Message>
+    )
     const NavToggle = ({expand, onChange}) => {
         return (
             <Navbar appearance="subtle" className="nav-toggle">
@@ -88,9 +97,6 @@ function App() {
         </Link>
     ));
 
-
-    const user = useSelector((state) => state.auth.value);
-    console.log("user from state", user);
     const dispatch = useDispatch();
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
@@ -103,8 +109,8 @@ function App() {
         });
     }, [auth, dispatch]);
 
-    const quote = useSelector((state) => state.userData.userDataDocument);
-    console.log("document from state", quote);
+    const [quote1, setQuote] = React.useState(5);
+    //("document from state", quote);
 
 
     let quotes = [
@@ -159,145 +165,141 @@ function App() {
     const [open, setOpen] = React.useState(false);
     const [quoteReload, setQuoteReload] = React.useState(false);
 
-
+    console.log("App loaded")
     return (
-    <div>
-        <ThemeProvider theme={theme === "dark" ? darkTheme : lightTheme}>
-            <CustomProvider theme={theme}>
-                <Router>
-                    <Routes>
-                        <Route exact path="/app" element={
-                            <ProtectedRoute>
-                                <div>
-                                    <Navbar>
-                                        <Nav>
-                                            <img
-                                                src="https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/logo10%20Dual%20Theme%20Compatable.png?alt=media&token=449edb64-124d-4abc-8459-8870732c2f72"
-                                                height="55" width="205" alt={"BudgetTC-Logo"}/>
-                                        </Nav>
-                                        <Nav className={"scrollGradient"} style={{ width: "calc(100% - 370px)", height: 55, overflowX: "auto"}}><div><Stack alignItems={"flex-end"} ><h6
-                                            style={{marginLeft: 20, color: "#797979", marginTop:23}}>
-                                            <i>{(quote == null) ? "null" : quotes[quote.quote]}</i></h6>
-                                            <IconButton size={"xs"} icon={<ReloadIcon/>} loading={quoteReload}
-                                                        style={{marginLeft: 10, background: "rgba(255,255,255,0)"}}
-                                                        onClick={() => {
-                                                            setQuoteReload(true);
-                                                            console.log("reload quote icon pressed:");
-                                                            let randInt = Math.floor(Math.random() * 45)
-                                                            updateUserDataInFireStore({quote: randInt})
-                                                                .then(() => {
-                                                                    dispatch(setQuote(randInt))
-                                                                    setQuoteReload(false);
-                                                                })
-                                                        }
-                                                        }/></Stack></div></Nav>
-
-                                        <Nav pullRight>
-                                            <Nav.Item>
-
-                                                <IconButton icon={<GearIcon/>} onClick={() => setOpen(true)}
-                                                            style={{background: "rgba(255,255,255,0)"}}/>
-
-
-                                            </Nav.Item>
-                                            <Nav.Item>
-                                                <AccountInfo/>
-                                            </Nav.Item>
-
-
-                                        </Nav>
-                                    </Navbar>
-                                    <div className={'div1'}>
-                                        <Container>
-                                            <Sidebar
-                                                width={expand ? 260 : 56}
-                                                collapsible
-
-                                            >
-                                                <Sidenav expanded={expand} defaultOpenKeys={['3']}
-                                                         appearance="default"
-                                                         activeKey={activeKey}
-                                                         onSelect={setActiveKey}
-                                                         style={{height: "100%"}}
-                                                >
-                                                    <Sidenav.Body>
-                                                        <Nav>
-                                                            <Nav.Item eventKey={1} as={NavLink}
-                                                                      href="/app/dashboard"
-                                                                      icon={<Dashboard/>}>
-                                                                Dashboard
-                                                            </Nav.Item>
-                                                            <Nav.Item eventKey={2} as={NavLink} href="/app/learn"
-                                                                      icon={<ModelIcon/>}>
-                                                                Learn
-                                                            </Nav.Item>
-                                                            <Nav.Item eventKey={3} as={NavLink} href="/app/budget"
-                                                                      icon={<TableIcon/>}>
-                                                                Budget Book
-                                                            </Nav.Item>
-                                                            <Nav.Item eventKey={4} as={NavLink}
-                                                                      href="/app/investments"
-                                                                      icon={<BarChartIcon/>}>
-                                                                Investments
-                                                            </Nav.Item>
-                                                            <Nav.Item eventKey={5} as={NavLink} href="/app/tools"
-                                                                      icon={<ToolsIcon/>}>
-                                                                Financial Tools
-                                                            </Nav.Item>
-                                                            <Nav.Item eventKey={6} as={NavLink} href="/app/calendar"
-                                                                      icon={<CalendarIcon/>}>
-                                                                Calendar
-                                                            </Nav.Item>
-
-                                                        </Nav>
-
-                                                    </Sidenav.Body>
-                                                </Sidenav>
-                                                <NavToggle expand={expand} onChange={() => setExpand(!expand)}/>
-                                            </Sidebar>
-
-                                            <Content>
-                                                <Settings open={open} setOpen={setOpen}/>
-                                                <Outlet/>
-                                            </Content>
-                                        </Container>
+        <div>
+            <ThemeProvider theme={darkTheme}>
+                <CustomProvider theme={'dark'}>
+                    <Router>
+                        <Routes>
+                            <Route exact path="/app" element={
+                                <ProtectedRoute>
+                                    <div>
+                                        <Navbar>
+                                            <Nav>
+                                                <img
+                                                    src="https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/logo10%20Dual%20Theme%20Compatable.png?alt=media&token=449edb64-124d-4abc-8459-8870732c2f72"
+                                                    height="55" width="205" alt={"BudgetTC-Logo"}/>
+                                            </Nav>
+                                            <Nav className={"scrollGradient"}
+                                                 style={{width: "calc(100% - 370px)", height: 55, overflowX: "auto"}}>
+                                                <div>
+                                                    <Stack alignItems={"flex-end"}>
+                                                        <h6 style={{marginLeft: 20, color: "#797979", marginTop: 23}}>
+                                                            <i>{(quote1 == null) ? "null" : quotes[quote1]}</i>
+                                                        </h6>
+                                                        <IconButton size={"xs"} icon={<ReloadIcon/>}
+                                                                    loading={quoteReload}
+                                                                    style={{
+                                                                        marginLeft: 10,
+                                                                        background: "rgba(255,255,255,0)"
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        setQuoteReload(true);
+                                                                        console.log("reload quote icon pressed:");
+                                                                        let randInt = Math.floor(Math.random() * 45)
+                                                                        updateUserDataInFireStore({quote: randInt})
+                                                                            .then(() => {
+                                                                                setQuote(randInt);
+                                                                                toaster.push(quoteMessage, {placement: "bottomEnd"});
+                                                                                setQuoteReload(false);
+                                                                            })
+                                                                    }
+                                                                    }/>
+                                                    </Stack>
+                                                </div>
+                                            </Nav>
+                                            <Nav pullRight>
+                                                <Nav.Item>
+                                                    <IconButton icon={<GearIcon/>} onClick={() => setOpen(true)}
+                                                                style={{background: "rgba(255,255,255,0)"}}/>
+                                                </Nav.Item>
+                                                <Nav.Item>
+                                                    <AccountInfo/>
+                                                </Nav.Item>
+                                            </Nav>
+                                        </Navbar>
+                                        <div className={'div1'}>
+                                            <Container>
+                                                <Sidebar
+                                                    width={expand ? 260 : 56}
+                                                    collapsible>
+                                                    <Sidenav expanded={expand} defaultOpenKeys={['3']}
+                                                             appearance="default"
+                                                             activeKey={activeKey}
+                                                             onSelect={setActiveKey}
+                                                             style={{height: "100%"}}>
+                                                        <Sidenav.Body>
+                                                            <Nav>
+                                                                <Nav.Item eventKey={1} as={NavLink}
+                                                                          href="/app/dashboard"
+                                                                          icon={<Dashboard/>}>
+                                                                    Dashboard
+                                                                </Nav.Item>
+                                                                <Nav.Item eventKey={2} as={NavLink} href="/app/learn"
+                                                                          icon={<ModelIcon/>}>
+                                                                    Learn
+                                                                </Nav.Item>
+                                                                <Nav.Item eventKey={4} as={NavLink}
+                                                                          href="/app/investments"
+                                                                          icon={<BarChartIcon/>}>
+                                                                    Investments
+                                                                </Nav.Item>
+                                                                <Nav.Item eventKey={5} as={NavLink} href="/app/tools"
+                                                                          icon={<ToolsIcon/>}>
+                                                                    Financial Tools
+                                                                </Nav.Item>
+                                                                <Nav.Item eventKey={6} as={NavLink} href="/app/calendar"
+                                                                          icon={<CalendarIcon/>}>
+                                                                    Calendar
+                                                                </Nav.Item>
+                                                                <Nav.Item eventKey={7} as={NavLink} href="/app/budget-test"
+                                                                          icon={<TableIcon/>}>
+                                                                    Calendar
+                                                                </Nav.Item>
+                                                            </Nav>
+                                                        </Sidenav.Body>
+                                                    </Sidenav>
+                                                    <NavToggle expand={expand} onChange={() => setExpand(!expand)}/>
+                                                </Sidebar>
+                                                <Content>
+                                                    <Settings open={open} setOpen={setOpen}/>
+                                                    <Outlet/>
+                                                </Content>
+                                            </Container>
+                                        </div>
                                     </div>
-                                </div>
-                            </ProtectedRoute>}>
-                            <Route path="dashboard"
-                                   element={<div className={'box4'}><DashboardTab/></div>}/>
-                            <Route path="learn" element={<div className={'box4'}><LearnTab/></div>}/>
-                            <Route path="investments"
-                                   element={<div className={'box4'}><InvestmentTab/></div>}/>
-                            <Route path="tools" element={<div className={'box4'}><ToolsTab/></div>}/>
-                            <Route path="budget" element={<div className={'box4'}><BudgetTab/></div>}/>
-                            <Route path="calendar"
-                                   element={<div className={'box4'}><CalendarTab/></div>}/>
-                        </Route>
-                        <Route exact path="/auth" element={
-                            <div className={"auth"}>
-                                <center>
-                                    <div className={"inner"}>
-                                        <Outlet/>
-                                    </div>
-                                </center>
-                            </div>}>
-                            <Route path="login" element={<Login/>}/>
-                            <Route path="register" element={<Register/>}/>
-                            <Route path="reset" element={<Reset/>}/>
-                            <Route path="signout" element={<Signout/>}/>
-                            <Route path="pagenotfound" element={<PageNotFound/>}/>
-                        </Route>
-
-                    </Routes>
-                </Router>
-            </CustomProvider>
-        </ThemeProvider>
-
-            </div>
-
+                                </ProtectedRoute>}>
+                                <Route path="dashboard"
+                                       element={<div className={'box4'}><DashboardTab/></div>}/>
+                                <Route path="learn" element={<div className={'box4'}><LearnTab/></div>}/>
+                                <Route path="investments"
+                                       element={<div className={'box4'}><InvestmentTab/></div>}/>
+                                <Route path="tools" element={<div className={'box4'}><ToolsTab/></div>}/>
+                                <Route path="budget-test/*" element={<div className={'box4'}><BudgetClass/></div>}/>
+                                <Route path="calendar"
+                                       element={<div className={'box4'}><CalendarTab/></div>}/>
+                            </Route>
+                            <Route exact path="/auth" element={
+                                <div className={"auth"}>
+                                    <center>
+                                        <div className={"inner"}>
+                                            <Outlet/>
+                                        </div>
+                                    </center>
+                                </div>}>
+                                <Route path="login" element={<Login/>}/>
+                                <Route path="register" element={<Register/>}/>
+                                <Route path="reset" element={<Reset/>}/>
+                                <Route path="signout" element={<Signout/>}/>
+                                <Route path="pagenotfound" element={<PageNotFound/>}/>
+                            </Route>
+                        </Routes>
+                    </Router>
+                </CustomProvider>
+            </ThemeProvider>
+        </div>
     );
-
 }
 
 export default App;

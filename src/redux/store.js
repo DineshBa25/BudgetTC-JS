@@ -2,7 +2,7 @@ import {configureStore} from '@reduxjs/toolkit'
 
 import authReducer from "./slice/authSlice";
 import themeReducer from "./slice/themeSlice"
-import userDataReducer from "./slice/userDataSlice"
+import userDataReducer from "../pages/userDataSlice"
 
 
 export const store = configureStore({

@@ -1,0 +1,41 @@
+.panel1 {
+    display: inline-block;
+    width: 300px;
+    padding: 10px;
+    background: rgba(27,29,36,0.64);
+    -webkit-transition: all 0.3s linear;
+    -moz-transition: all 0.3s linear;
+}
+
+.panel1:hover {
+    background: rgba(0, 0, 0, 0.99);
+    width: 300px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.infoTab{
+
+    background-color: #25272c;
+    height: calc(100% - 80px);
+    float: left;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 390px;
+    border-radius: 7px;
+}
+
+
+.courseMaterialPanel{
+    background: rgba(21, 23, 31, 0.49);
+    border-radius: 7px;
+    margin: 10px 30px 10px 10px;
+    padding: 20px;
+    width: calc(100% - 480px);
+    height: calc(100% - 80px);
+    align-items: stretch;
+    float: right;
+    overflow: auto;
+
+}

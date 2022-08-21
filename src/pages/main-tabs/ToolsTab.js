@@ -26,12 +26,11 @@ function ToolsTab() {
         <div className={"box8"}>
         <div className="test1"  style={{background: theme === "dark"? "rgba(21,23,31,0.96)": "#ececf1", marginLeft: 10, marginTop:10, marginBottom: 10, width: 390, borderRadius: 7}}>
             <center>
-                <Dropdown title={activeWhichCalc} size={"lg"} activeKey="a" color={"#fff"} onSelect={setActiveWhichCalc} appearance="ghost" style={{marginTop:15}}>
-                    <Dropdown.Item eventKey="Retirement Calculator (Roth 401K)"><b>Retirement Calculator (Roth 401K)</b></Dropdown.Item>
-                    <Dropdown.Item eventKey="Investment Calculator">Investment Calculator</Dropdown.Item>
+                <Dropdown title={activeWhichCalc} size={"lg"} activeKey="a"  onSelect={setActiveWhichCalc} appearance="ghost" style={{marginTop:15}}>
+                    <Dropdown.Item eventKey="Retirement Calculator (Roth 401K)">Retirement Calculator (Roth 401K)</Dropdown.Item>
                     <Dropdown.Item eventKey="Loan Payment Calculator">Loan Payment Calculator</Dropdown.Item>
-                    <Dropdown.Item eventKey="Split Expenses Calculator">Split Expenses Calculator</Dropdown.Item>
                     <Dropdown.Item eventKey="Auto Affordability Calculator">Auto Affordability Calculator</Dropdown.Item>
+                    <Dropdown.Item eventKey="Home Affordability Calculator">Home Affordability Calculator</Dropdown.Item>
                 </Dropdown>
             </center>
             <hr style={{marginBottom: 0}}/>

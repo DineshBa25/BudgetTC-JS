@@ -3,7 +3,7 @@ import {getAuth, signOut} from "firebase/auth";
 import {Button, ButtonToolbar, IconButton, Modal, Panel, Radio} from "rsuite";
 import {useNavigate} from "react-router-dom";
 import {Exit} from "@rsuite/icons";
-
+import "./auth.css";
 
 const Signout = () => {
     let navigate = useNavigate();
@@ -21,7 +21,8 @@ const Signout = () => {
                 </div>
             </center>
             <Panel header={<h3>You're all signed out now!</h3>} bordered
-                   style={{background: "rgba(18,25,45,0.85)", borderWidth: "thick"}}>
+                   className={"mainPanel"}  style={{borderRadius: 20}}>
+                <h8>Everything has been saved to the cloud. See you soon!</h8>
                 <ButtonToolbar>
                     <Button appearance="link" onClick={handleOnClick}>Back to login</Button>
                 </ButtonToolbar>
@@ -30,26 +31,38 @@ const Signout = () => {
     );
 };
 
-export function SignoutButton() {
+export function SignoutButton({setOpenHook}) {
     const auth = getAuth();
     let navigate = useNavigate();
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => {
+        setOpen(true);
+        setOpenHook(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setOpenHook(false);
+    };
     const handleSignout = () => {
+        localStorage.setItem("Authenticated", "false");
         signOut(auth)
             .then(() => {
                 localStorage.setItem("Authenticated", false)
                 console.log("Signed out")
                 console.log(localStorage.getItem("Authenticated"))
+
+            }).then(
+            () => {
                 navigate("/auth/signout")
-            })
+            }
+        )
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log("An error occurred signing out: ", errorCode, errorMessage);
             })
     };
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+
 
     return (
         <div><ButtonToolbar>

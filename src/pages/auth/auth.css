@@ -1,0 +1,17 @@
+.logodiv {
+    height: 50px;
+    width: 275px;
+    background-color: #282c32;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px
+}
+
+.mainPanel {
+    background: rgba(27, 32, 40, 0.93);
+
+}
+
+.scaleLoader {
+    height: 200px;
+    margin-top: 50px;
+}

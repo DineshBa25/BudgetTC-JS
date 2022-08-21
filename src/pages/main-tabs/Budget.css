@@ -1,0 +1,145 @@
+.budgetScrollablePanel {
+    width: calc(100% - 735px);
+    height: calc(100% - 0px);
+    align-items: stretch;
+    float: left;
+    overflow: auto;
+    margin-left: 0px;
+}
+
+.viewTypeSelectionNav {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: calc(100% - 950px);
+    z-index: 1;
+    position: fixed;
+    align-items: center;
+    text-align: center;
+    background: #1b1d24;
+    margin-left: 100px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.budgetNavigationInfoPanel{
+    background-color: rgb(20, 22, 28);
+    width: 475px;
+    height: calc(100% - 10px);
+    float: right;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 7px;
+}
+
+.budgetSelectedCategory{
+    background-color: rgb(27, 29, 36);
+    border-radius: 50px 50px 7px 7px;
+    width: 475px;
+    height: 195px;
+    bottom: 8px;
+    position: fixed;
+    padding: 20px;
+    transition: 0.7s;
+    overflow-y: hidden;
+    border-top-width: 7px;
+    border-top-style: solid;
+    border-top-color: rgb(12, 13, 21);
+
+}
+
+.budgetSelectedCategory:hover {
+    height: 350px;
+    overflow-y: auto;
+}
+
+.moneyText{
+    font-size: 20px;
+    font-weight: bold;
+    color: #1abe12;
+
+}
+
+.hoverText{
+    font-size: 15px;
+    color: #b4b4b4;
+    transition: 1s
+}
+
+.budgetSelectedCategory:hover .hoverText {
+    font-size: 0px;
+}
+
+.linkedExpenseText{
+    font-size: 0px;
+    color: #b4b4b4;
+    transition: 1s
+}
+
+.budgetSelectedCategory:hover .linkedExpenseText {
+    font-size: 15px;
+}
+
+
+.budgetDateSelector{
+    background-color: rgb(27, 29, 36);
+    border-radius: 7px 7px 50px 50px;
+    width: 475px;
+    height: 90px;
+    top: 65px;
+    position: fixed;
+    padding: 20px;
+    transition: 0.7s;
+    overflow-y: hidden;
+    border-bottom-width: 7px;
+    border-bottom-style: solid;
+    border-bottom-color: rgb(12, 13, 21);
+
+}
+
+.budgetNavPanel{
+    background-color: rgb(20, 22, 28);
+    width: 245px;
+    height: calc(100% - 10px);
+    float: left;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 7px;
+}
+
+.budgetNavNavigationHeader{
+    background-color: rgb(27, 29, 36);
+    border-radius: 7px 7px 25px 25px;
+    width: 240px;
+    height: 50px;
+    top: 65px;
+    position: fixed;
+    padding: 5px;
+    overflow-y: hidden;
+    border-bottom-width: 7px;
+    border-bottom-style: solid;
+    border-bottom-color: rgb(12, 13, 21);
+
+}
+
+.budgetNavActionHeader{
+    background-color: rgb(27, 29, 36);
+    border-radius: 7px 7px 25px 25px;
+    width: 240px;
+    height: 50px;
+    padding: 5px;
+    margin-top: 10px;
+    overflow-y: hidden;
+    border-bottom-width: 7px;
+    border-bottom-style: solid;
+    border-bottom-color: rgb(12, 13, 21);
+
+}
+.budgetNavActionItems{
+    width: 240px;
+    height: auto;
+    margin-top: 20px;
+
+}
+

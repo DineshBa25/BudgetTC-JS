@@ -102,11 +102,12 @@ article {
 }
 
 .box4 {
-    background-color: #0f1013;
+    background-color: #2a2d33;
+    background-image: linear-gradient(19deg, rgba(68, 72, 80, 0.9) 0%, rgba(68, 72, 80, 0.9) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
+    background-size: 100% 100%;
     position: fixed;
     height: 100%;
     width: 100%;
-    border-top-left-radius: 20px;
 }
 
 .box5 {
@@ -137,8 +138,6 @@ article {
 }
 
 .box8 {
-    background-color: #21D4FD;
-    background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 255, 216, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
     background-size: 100% 100%;
     position: fixed;
     height: calc(100% - 55px);
@@ -192,6 +191,7 @@ article {
 
 .test1 {
     background-color: #25272c;
+
     width: 400px;
     height: calc(100% - 20px);
     float: left;
@@ -238,6 +238,7 @@ article {
     align-items: stretch;
     float: right;
     overflow: auto;
+
 
 }
 
@@ -332,7 +333,7 @@ article {
     height: 100%;
     width: 100%;
     background-color: #0c1e35;
-    background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 255, 216, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
+    background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 216, 255, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
     background-size: 100% 100%;
 
     overflow-y: auto;
@@ -347,13 +348,7 @@ article {
     overflow-y: auto;
 }
 
-.logodiv {
-    height: 50px;
-    width: 275px;
-    background: linear-gradient(#595959, #101010);
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px
-}
+
 
 :root {
     color-scheme: dark;

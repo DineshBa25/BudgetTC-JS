@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Button, Drawer, IconButton, Stack} from "rsuite";
+import {Avatar, Button, Divider, Drawer, IconButton, Loader, Stack} from "rsuite";
 import {SignoutButton} from "../pages/auth/Signout";
 import {store} from "../redux/store";
 import EditIcon from "@rsuite/icons/Edit";
@@ -9,6 +9,7 @@ import EditIcon from "@rsuite/icons/Edit";
 function AccountInfo() {
     /* Used to Determine the Open State of aADrawer */
     const [open, setOpen] = React.useState(false);
+    const [awaitingModal, setAwaitingModal] = React.useState(false);
     /* Handles the click when user wants to open AccountInfo Drawer*/
     const handleOpen = () => setOpen(true);
     return (
@@ -20,11 +21,15 @@ function AccountInfo() {
             <div className="modal-container">
                 <Drawer backdrop={"static"} open={open} onClose={() => setOpen(false)} size={"sm"}>
                     <Drawer.Header style={{background: "rgba(42,45,51,0.75)"}}>
+
                         <Drawer.Title>Account Information</Drawer.Title>
-                        <SignoutButton/>
+                        <SignoutButton setOpenHook = {setAwaitingModal}/>
                     </Drawer.Header>
                     <Drawer.Body style={{overflowX: "hidden", background: "rgb(32,34,42)"}}>
+
                         <center>
+                            {awaitingModal? <div><Loader background content="Awaiting response..." vertical/><Divider/></div> :  null}
+
                             <h4 style={{marginTop: 15, paddingBottom: 30}}>You're currently signed in as:</h4>
                             <Avatar
                                 size="lg"
