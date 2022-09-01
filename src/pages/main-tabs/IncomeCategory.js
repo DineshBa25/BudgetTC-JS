@@ -14,15 +14,14 @@ import {
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Typography from "@mui/material/Typography";
 import {StyledTableCell, StyledTableRow} from "./BudgetCategory"
-import {IconButton, Panel, Stack} from "rsuite";
+import {IconButton} from "rsuite";
 
 function IncomeCategory({incomeState}) {
     return(
         <Card key={"One Time Income"} id={"One Time Income"} sx={{minWidth: 275}}
               style={{
-                  marginBottom: 10, marginLeft: 10, marginRight: 10, borderRadius: 7, background:  "rgba(30,31,40,0.92)"
+                  marginBottom: 10, marginRight: 5, borderRadius: 7, background:  "rgba(30,31,40,0.92)"
               }}>
             <CardContent>
 
