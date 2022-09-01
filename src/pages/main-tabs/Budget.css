@@ -4,7 +4,7 @@
     align-items: stretch;
     float: left;
     overflow: auto;
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 .viewTypeSelectionNav {
@@ -66,11 +66,11 @@
 }
 
 .budgetSelectedCategory:hover .hoverText {
-    font-size: 0px;
+    font-size: 0;
 }
 
 .linkedExpenseText{
-    font-size: 0px;
+    font-size: 0;
     color: #b4b4b4;
     transition: 1s
 }
