@@ -25,6 +25,7 @@ body {
   display: flex;
   position: relative;
 
+  //noinspection CssOverwrittenProperties
   .btn-toggle {
     cursor: pointer;
     width: 35px;
@@ -37,7 +38,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 15px;
-    display: none;
+
   }
 
   .sidebar-btn-wrapper {
