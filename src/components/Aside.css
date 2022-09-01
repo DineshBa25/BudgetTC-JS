@@ -11,7 +11,7 @@
     border-radius: 50%;
     font-weight: bold;
     font-size: 50px;
-    bottom: 0px;
+    bottom: 0;
     cursor: pointer;
 }
 #header .pro-sidebar {
@@ -25,7 +25,7 @@
 }
 #header .pro-sidebar-inner {
     background-color: transparent;
-    box-shadow: 0.5px 0.866px 2px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.15);
 }
 #header .pro-sidebar-inner .pro-sidebar-layout {
     overflow-y: auto;
@@ -33,7 +33,7 @@
 }
 #header .pro-sidebar-inner .pro-sidebar-layout .logotext p {
     font-size: 20px;
-    padding: 0 0px;
+    padding: 0 0;
     color: rgba(252, 252, 252, 0.521);
     font-weight: bold;
 }
@@ -42,7 +42,7 @@
 }
 #header .pro-sidebar-inner .pro-sidebar-layout ul .pro-inner-item {
     color: rgb(212, 212, 212);
-    margin: 0px 0px;
+    margin: 0 0;
     font-weight: bold;
 }
 #header .pro-sidebar-inner .pro-sidebar-layout ul .pro-inner-item .pro-icon-wrapper {
