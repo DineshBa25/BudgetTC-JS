@@ -17,6 +17,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {StyledTableCell, StyledTableRow} from "./BudgetCategory"
 import {IconButton} from "rsuite";
 
+
+/**
+ * @param incomeState
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function IncomeCategory({incomeState}) {
     return(
         <Card key={"One Time Income"} id={"One Time Income"} sx={{minWidth: 275}}
@@ -55,6 +61,7 @@ function IncomeCategory({incomeState}) {
                                                        key={value[1].id}
                                             />
                                         </StyledTableCell>
+
                                         <StyledTableCell align="center">
                                             <OutlinedInput
                                                 id="outlined-adornment-amount"
