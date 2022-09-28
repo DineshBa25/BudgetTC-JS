@@ -168,7 +168,7 @@ const CalendarTab = () => {
                         </Popover>
                     }
                 >
-                    <a>{moreCount} more</a>
+                    <Button appearance={"link"}>{moreCount} more</Button>
                 </Whisper>
             );
 
@@ -272,8 +272,6 @@ function AddWidget() {
         "6": "What is the cost of [this expense]",
         "7": "How often is this expense charged?",
         "8": "when is this expense charged?",
-
-
     };
     const [alignment, setAlignment] = React.useState('web');
 

@@ -11,8 +11,8 @@ import {
 } from "rsuite";
 import Chart from "react-apexcharts";
 import {ValueType} from "rsuite/Radio";
-import {store} from "../../redux/store";
-import {setUserDataInFireStore} from "../auth/firebase";
+import {store} from "../../../redux/store";
+import {setUserDataInFireStore} from "../../auth/firebase";
 import {AutoAffordabilityCalcInput, AutoAffordabilityCalcView} from "./AutoAffordabilityCalc";
 
 

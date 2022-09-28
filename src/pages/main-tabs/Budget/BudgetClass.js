@@ -1,12 +1,18 @@
 import React from 'react';
-import {Badge, Button, FlexboxGrid, IconButton, Message, Nav, Stack} from "rsuite";
-
-import {database} from "../../configs/firebaseConfig";
-import {ref, onValue, update} from "firebase/database";
+import {
+    Badge,
+    Button,
+    FlexboxGrid,
+    IconButton,
+    Message,
+    Nav, Panel,
+    Stack,
+    Table
+} from "rsuite";
+import {database} from "../../../configs/firebaseConfig";
+import {ref, onValue, update, get, child} from "firebase/database";
 import {
     Button as ButtonMUI,
-    Card,
-    CardContent,
     InputAdornment,
     OutlinedInput,
     Paper,
@@ -14,7 +20,7 @@ import {
     TableBody,
     TableContainer,
     TableHead,
-    TextField
+    TextField, Avatar, Select, MenuItem, FormControl, TableCell
 } from "@mui/material";
 import {AiOutlinePlus} from "react-icons/ai";
 import {GiAbstract002, GiReceiveMoney, GiTakeMyMoney} from "react-icons/gi";
@@ -22,8 +28,8 @@ import './Budget.css';
 import BudgetCategoryRender from "./BudgetCategoryRender";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {StyledTableRow, StyledTableCell, formatter} from "./BudgetCategory"
-import DatePickerTC from "./DatePickerTC";
+import {StyledTableRow, StyledTableCell, formatter} from "./BudgetFormatters"
+import DatePickerTC from "../calendar/DatePickerTC";
 import Chart from "react-apexcharts";
 import {ScaleLoader} from "react-spinners";
 import BudgetActionMenu from "./BudgetActionMenu";
@@ -34,8 +40,7 @@ class BudgetClass extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            categories: [], selectedCategory: "None", totalAmountAllocated: 0, chartState: {
-
+            categories: [], budgetCatMap: {},selectedCategory: "None", totalAmountAllocated: 0, chartState: {
                 series: [], options: {
                     labels: [], legend: {
                         width: 410, position: 'bottom', show: false,
@@ -57,18 +62,16 @@ class BudgetClass extends React.Component {
                 categories: [],
                 oneTime: [],
                 totalAmountAllocated: 0,
-
         }}
-
-
     }
 
     //on component mount, initiate or refresh budget categories and income categories
     componentDidMount() {
         setTimeout(() =>{
             //get budget categories from firebase so that each category can be updated when with is updated in the realtime database
-        onValue(ref(database, "users/man1/budgetCategories"), snapshot => {
+        get(child(ref(database), "users/man1/budgetCategories")).then((snapshot) => {
             let budgetCats = []; //stores all budget categories
+            let budgetCatMap = {}; //stores the mapping of budget categories to their names
             let chartValues = []; //stores all the amounts allocated for each category so that the overview donut chart can display it
             let chartNames = []; //stores all the names of the categories so that the overview donut chart can use it
             let chartColors = []; //stores all the colors of the categories so that the overview donut chart can use it
@@ -76,6 +79,7 @@ class BudgetClass extends React.Component {
             //using the response from the database, looping through each category and adding it to the arrays created above
             snapshot.forEach(snap => {
                 budgetCats.push(snap.val());
+                budgetCatMap[snap.val().id] = snap.val();
                 chartValues.push(parseFloat(snap.val().amount));
                 chartNames.push(snap.val().name);
                 chartColors.push(snap.val().color);
@@ -83,7 +87,7 @@ class BudgetClass extends React.Component {
             });
             //modifying state with updated arrays so that the values that changed will trigger a rerender
             this.setState({
-                categories: budgetCats, totalAmountAllocated: totalAmountAllocated, chartState: {
+                categories: budgetCats, totalAmountAllocated: totalAmountAllocated, budgetCatMap: budgetCatMap, chartState: {
                     series: chartValues, options: {
                         ...this.state.chartState.options, labels: chartNames, colors: chartColors,
                     }
@@ -92,7 +96,7 @@ class BudgetClass extends React.Component {
         });
         //get income categories from firebase so that each category can be updated when with is updated in the realtime database
             onValue(ref(database,  "users/man1/incomeCategories"), snapshot => {
-                let incomeCats = []; //stores all seperate use created income categories
+                let incomeCats = []; //stores all separate use created income categories
                 let oneTimeIncome = []; //stores all one time income(misc income) categories
                 let totalAmountAllocated = 0;
                 //using the response from the database, looping through each category and adding it to the arrays created above
@@ -124,13 +128,7 @@ class BudgetClass extends React.Component {
      */
     handleOnNameChange(newName, address) {
         setTimeout(() => { //set timeout so that the state is updated before the update is sent to the database
-            update(ref(database, address), {
-                name: newName,
-            })
-                .then(() => {
-                    console.log(newName, " updated successfully in ", address);
-                    this.setState({lastSaved: Date.now()});
-                })
+            update(ref(database, address), {name: newName,})  //update the name of the category in the database
                 .catch((error) => {
                     console.error("Error updating name in ", address, error);
                 });
@@ -145,33 +143,69 @@ class BudgetClass extends React.Component {
      * @param item the id of the item that is being updated
      */
     handleOnAmountChange(newAmount, newTotal, cat, item) {
-       setTimeout(() => {
-        const updates = {}; //stores the updates to be sent to the database
-        console.log(newAmount, newTotal, cat, item);
-        //console.log(this.state.categories[item])
-        updates['users/' + 'man1' + '/budgetCategories/' + cat + '/amount'] = newTotal;
-        updates['users/' + 'man1' + '/budgetCategories/' + cat + '/items/' + item + '/amount'] = newAmount;
-        update(ref(database), updates)
-            .then(() => {
-                console.log(newAmount, " updated successfully");
-                this.setState({lastSaved: Date.now()});
-            })
-            .catch((error) => {
-                console.error("Error updating name", error);
-            });
 
-        console.log(updates);}, 0);
+            const updates = {}; //stores the updates to be sent to the database
+            updates[`users/${'man1'}/budgetCategories/${cat}/amount`] = newTotal;
+            updates[`users/${'man1'}/budgetCategories/${cat}/items/${item}/amount`] = newAmount;
 
+            let index = this.state.chartState.options.labels.indexOf(this.state.budgetCatMap[cat].name); //get the index of the category in the chart
+
+              this.setState({
+                 // [`categories/${cat}/items/${item}/amount`]: newAmount,[`categories/${cat}/amount`]: newTotal,
+                chartState: {
+                     ...this.state.chartState, series: [
+                          ...this.state.chartState.series.slice(0, index),
+                          newTotal,
+                          ...this.state.chartState.series.slice(index + 1)
+                     ]
+                }
+              });
+
+                setTimeout(() => {
+                    update(ref(database), updates)
+                        .catch((error) => {
+                            console.error("Error updating amount", error.message);
+                        });
+                }, 0);
+
+            };
+
+
+
+    /**
+     * Function that is called when a user edits the amount of a budget category.
+     * @param newAmount the new amount allocated for the category
+     * @param newTotal the new total amount allocated for all categories
+     * @param cat the id of the category that is being updated
+     * @param item the id of the item that is being updated
+     * @param type the type of item that is being updated (either "category" or "oneTime")
+     */
+    handleOnIncomeAmountChange(newAmount, newTotal, cat, item, type){
+        setTimeout(() => {
+            const updates = {}; //stores the updates to be sent to the database
+            if(type === "oneTime")
+                updates[`users/${'man1'}/incomeCategories/${item}/amount`] = newAmount;
+            else if(type === "category"){
+                updates[`users/${'man1'}/incomeCategories/${cat}/amount`] = newTotal; //update the total amount allocated for the income category
+                updates[`users/${'man1'}/incomeCategories/${cat}/items/${item}/amount`] = newAmount;
+            }
+            update(ref(database), updates) //update the amount of the category in the database
+                .catch((error) => {
+                    console.error("Error updating name", error);
+                });}, 0);
     }
 
 
+    /**
+     * Sets the selected category value in that state to the category that was clicked on that was passed in as a parameter so that the category can be displayed in the category view
+     * @param category the category that was clicked on
+     */
     setSelectedCategory(category) {
         this.setState({selectedCategory: category});
     }
 
 
     render() {
-
         return (<div>
                 {(this.state.loading) ? <div style={{position: "fixed", top: "calc(50% - 50px)", left: "50%"}}>
                         <ScaleLoader width={15} height={50} color={"#fff"} loading={this.state.loading}/></div> :
@@ -241,7 +275,7 @@ class BudgetClass extends React.Component {
                                 </center>: null}
                                 {(this.state.currentView === "Income" || this.state.currentView === "Both") ?
                                     <div key="One Time Income"  style={(this.state.currentView === "Income") ? {marginTop: 10} : null}>
-                                        <IncomeCategory incomeState={this.state.income}></IncomeCategory>
+                                        <IncomeCategory incomeState={this.state.income} handleAmountChange={this.handleOnIncomeAmountChange.bind()}></IncomeCategory>
                                     </div>
                                     : null}
 
@@ -258,11 +292,9 @@ class BudgetClass extends React.Component {
                                     //console.log(Object.entries(cat.items));
                                     return (<div key={cat.name}>
 
-                                            <Card key={cat.id} id={cat.id} sx={{minWidth: 275}}
-                                                  style={{
-                                                      marginTop: 7, marginRight: 5, borderRadius: 7, background: "rgb(26,29,36)"
-                                                  }}>
-                                                <CardContent>
+                                            <Panel key={cat.id} id={cat.id} style={{minWidth :275, borderRadius: "25px"}}
+                                            className={"expenseCategoryPanel"} >
+
                                                     <Stack direction={"row"} spacing={5} >
 
                                                         <Message
@@ -274,16 +306,19 @@ class BudgetClass extends React.Component {
                                                     </Stack>
 
 
-                                                    <TableContainer component={Paper}>
+                                                    <TableContainer component={Paper} className={"expenseCategoryTable"}>
                                                         <TableMUI sx={{minWidth: 400}} size="small"
-                                                                  aria-label="a dense table">
+                                                                  aria-label="a dense table" >
                                                             <TableHead>
-                                                            <StyledTableRow>
-                                                                    <StyledTableCell style={{background: "#b10303"}}><b>Subcategory/Expense</b></StyledTableCell>
-                                                                    <StyledTableCell align="center" style={{background:  "#b10303"}} >Amount
-                                                                        Allocated</StyledTableCell>
-                                                                    <StyledTableCell align="right"
-                                                                                     style={{width: 120, background:  "#b10303"}}/>
+                                                            <StyledTableRow >
+                                                                    <StyledTableCell style={{background:  "#720000", width: 100}}><b>Subcategory/Expense</b></StyledTableCell>
+                                                                    <StyledTableCell align="center" style={{background:  "#720000", width: 50}} >Options</StyledTableCell>
+                                                                    <StyledTableCell align="center" style={{background:    "#720000", width: 100}} >AmountAllocated</StyledTableCell>
+
+                                                                <StyledTableCell align="center" style={{background:   "#720000", width: 50}} >Linked Expenses</StyledTableCell>
+
+                                                                <TableCell align={"right"} className={"expenseCategoryEditIconStack"}> </TableCell>
+
                                                                 </StyledTableRow>
                                                             </TableHead>
                                                             <TableBody>
@@ -300,36 +335,57 @@ class BudgetClass extends React.Component {
                                                                                     expenseList: value[1].expenseList,
                                                                                     color: cat.color
                                                                                 });
-                                                                            }}>
+                                                                            }}
+                                                                            className={"expenseCategoryRow"}
+                                                                            >
                                                                             <StyledTableCell component="th"
                                                                                              scope="row">
                                                                                 <TextField id="standard-basic"
                                                                                            variant="standard"
-                                                                                           fullWidth size={"small"}
+                                                                                           size={"small"}
+                                                                                           fullWidth
+                                                                                           style={{minWidth: 150}}
                                                                                            defaultValue={value[1].name}
                                                                                            key={value[1].id}
-                                                                                           onBlur={async event => this.handleOnNameChange(event.target.value, 'users/' + 'man1' + '/budgetCategories/' + cat.id + '/items/' + value[1].id)}
-
+                                                                                           onBlur={async event => this.handleOnNameChange(event.target.value, `users/${'man1'}/budgetCategories/${cat.id}/items/${value[1].id}`)}
                                                                                 />
                                                                             </StyledTableCell>
-                                                                            <StyledTableCell align="center">
+                                                                            <StyledTableCell align="center" style={{width: 250}}>
+                                                                                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+
+
+                                                                                        <Select
+                                                                                            labelId="demo-simple-select-standard-label"
+                                                                                            id="demo-simple-select-standard"
+                                                                                            value={"expense"}
+                                                                                            label="Type"
+                                                                                        >
+                                                                                            <MenuItem value={"fund"}>Fund</MenuItem>
+                                                                                            <MenuItem value={"expense"}>Expense</MenuItem>
+                                                                                        </Select>
+                                                                                </FormControl>
+                                                                            </StyledTableCell>
+                                                                            <StyledTableCell align="center"  >
                                                                                 <OutlinedInput
                                                                                     id="outlined-adornment-amount"
                                                                                     startAdornment={<InputAdornment
                                                                                         position="start">$</InputAdornment>}
                                                                                     style={{
-                                                                                        top: '0px',
-                                                                                        width: "40%",
-                                                                                        minWidth: 120
+                                                                                        maxWidth: 150,
+                                                                                        minWidth: 85
                                                                                     }}
-
                                                                                     size={"small"}
                                                                                     defaultValue={value[1].amount}
                                                                                     onBlur={async event => this.handleOnAmountChange(event.target.value, parseFloat(cat.amount) - parseFloat(value[1].amount) + parseFloat(event.target.value), cat.id, value[1].id)}
 
                                                                                 />
                                                                             </StyledTableCell>
-                                                                            <StyledTableCell align="right">
+                                                                            <StyledTableCell align="center" style={{width: 120}}>
+                                                                                <center>
+                                                                                <Avatar sx={{bgcolor: "#700000", color: "#ffffff", width: 34, height: 34 }}>{(value[1].expenseList !== undefined)? Object.keys(value[1].expenseList).length: 0}</Avatar>
+                                                                                </center>
+                                                                            </StyledTableCell>
+                                                                            <StyledTableCell align="right" className={"expenseCategoryEditIconStack"}>
 
                                                                                 <IconButton aria-label="edit"
                                                                                             style={{
@@ -359,8 +415,7 @@ class BudgetClass extends React.Component {
                                                             Add Item
                                                         </ButtonMUI>
                                                     </center>
-                                                </CardContent>
-                                            </Card>
+                                            </Panel>
                                         </div>
 
                                     );
@@ -382,12 +437,12 @@ class BudgetClass extends React.Component {
                         </div>
                         <div className={"budgetNavigationInfoPanel"}>
                             <center>
-                                <div className={"budgetDateSelector"}>
+                                <div className={"budgetDateSelector"} >
                                     <DatePickerTC></DatePickerTC>
                                 </div>
-
+                                <div className={"budgetNavigationInfoPanelMain"}>
                                 <div style={{height: 285}}>
-                                    <div style={{width: 350, marginLeft: 0, marginTop: 100}}>
+                                    <div style={{width: 350, marginLeft: 0}}>
 
                                         <Chart
                                             options={this.state.chartState.options}
@@ -461,12 +516,32 @@ class BudgetClass extends React.Component {
                                                 <div style={{
                                                     background: "rgb(26,26,26)", width: "auto",
                                                 }}>
-                                                    <h4 style={(this.state.totalAmountAllocated-this.state.income.totalAmountAllocated >= 0)? {color: "rgb(28,157,2)"}: {color: "rgb(169,0,0)" }}><b>{formatter.format(this.state.totalAmountAllocated-this.state.income.totalAmountAllocated)}</b></h4>
+                                                    <h4 style={(this.state.income.totalAmountAllocated - this.state.totalAmountAllocated >= 0)? {color: "rgb(28,157,2)"}: {color: "rgb(169,0,0)" }}><b>{formatter.format(this.state.income.totalAmountAllocated - this.state.totalAmountAllocated)}</b></h4>
                                                 </div>
                                             </div>
                                         </FlexboxGrid.Item>
                                     </FlexboxGrid>
                                 </div>
+                                <div>
+                                    <Table
+                                        height={400}
+                                        data={this.state.categories}
+                                        onRowClick={rowData => {
+                                            console.log(rowData);
+                                        }}
+                                    >
+                                        <Table.Column width={350}>
+                                            <Table.HeaderCell>Category Name</Table.HeaderCell>
+                                            <Table.Cell dataKey="name" />
+                                        </Table.Column>
+                                        <Table.Column width={120} fixed="right">
+                                            <Table.HeaderCell>Amount Allocated</Table.HeaderCell>
+                                            <Table.Cell  dataKey="amount" />
+                                        </Table.Column>
+                                    </Table>
+                                </div>
+                                </div>
+
                                 <BudgetCategoryRender
                                     selectedCategory={this.state.selectedCategory}></BudgetCategoryRender>
                             </center>
@@ -474,10 +549,7 @@ class BudgetClass extends React.Component {
                         }
                     </div>}
             </div>);
-
     }
-
-
 }
 
 export default BudgetClass;

@@ -1,19 +1,13 @@
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import {LocalizationProvider, StaticDatePicker, DatePicker as MUIDatePicker, Static} from "@mui/lab";
-import {Button as ButtonMUI, TextField, IconButton as IconButtonMUI} from "@mui/material";
+
 import React from "react";
-import {isWeekend} from "date-fns";
-import {DatePicker, IconButton, Stack} from "rsuite";
-import {KeyboardArrowRight, MoreHorizTwoTone, MoreRounded} from "@mui/icons-material";
-import {BiImport} from "react-icons/bi";
-import ImportIcon from '@rsuite/icons/Import';
-import {AiOutlinePlus} from "react-icons/ai";
+import {Stack} from "rsuite";
 import ArrowLeftLineIcon from '@rsuite/icons/ArrowLeftLine';
 import ArrowRightLineIcon from '@rsuite/icons/ArrowRightLine';
 
 const DatePickerTC = ({value, setValue}) => {
 
-    const [open, setOpen] = React.useState(false);
+
+    //const [open, setOpen] = React.useState(false);
 
     const handleOnDateClick = () => {
         console.log("date clicked");

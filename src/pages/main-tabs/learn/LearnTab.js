@@ -28,7 +28,7 @@ const LearnTab = () => {
                     <Panel shaded bordered bodyFill className={"panel1"}>
                         <center>
                             <img
-                                src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fcohenwoodworking.com%2Fwp-content%2Fuploads%2F2016%2F09%2Fimage-placeholder-500x500.jpg&f=1&nofb=1"
+                                src="src/pages/main-tabs/learn/LearnTab?u=http%3A%2F%2Fcohenwoodworking.com%2Fwp-content%2Fuploads%2F2016%2F09%2Fimage-placeholder-500x500.jpg&f=1&nofb=1"
                                 height="180" width="280" style={{borderTopRightRadius: 10, borderTopLeftRadius: 10}}/>
                         </center>
                         <Panel header="Introduction" style={{
@@ -46,7 +46,7 @@ const LearnTab = () => {
                     </Panel>
                     <Panel shaded bordered bodyFill className={"panel1"}>
                         <img
-                            src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fcohenwoodworking.com%2Fwp-content%2Fuploads%2F2016%2F09%2Fimage-placeholder-500x500.jpg&f=1&nofb=1"
+                            src="src/pages/main-tabs/learn/LearnTab?u=http%3A%2F%2Fcohenwoodworking.com%2Fwp-content%2Fuploads%2F2016%2F09%2Fimage-placeholder-500x500.jpg&f=1&nofb=1"
                             height="180" width="280" style={{borderTopRightRadius: 10, borderTopLeftRadius: 10}}/>
                         <Panel header="RSUITE" style={{background: "rgba(27,29,36,0.85)"}}>
                             <p>
@@ -59,7 +59,7 @@ const LearnTab = () => {
                     </Panel>
                     <Panel shaded bordered bodyFill className={"panel1"}>
                         <img
-                            src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fcohenwoodworking.com%2Fwp-content%2Fuploads%2F2016%2F09%2Fimage-placeholder-500x500.jpg&f=1&nofb=1"
+                            src="src/pages/main-tabs/learn/LearnTab?u=http%3A%2F%2Fcohenwoodworking.com%2Fwp-content%2Fuploads%2F2016%2F09%2Fimage-placeholder-500x500.jpg&f=1&nofb=1"
                             height="180" width="280" style={{borderTopRightRadius: 10, borderTopLeftRadius: 10}}/>
                         <Panel header="RSUITE" style={{background: "rgba(27,29,36,0.85)"}}>
                             <p>
