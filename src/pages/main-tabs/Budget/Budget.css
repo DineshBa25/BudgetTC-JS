@@ -21,7 +21,7 @@
 }
 
 .budgetNavigationInfoPanel{
-    background-color: rgb(20, 22, 28);
+    background-color: rgb(15, 16, 21);
     width: 475px;
     height: calc(100% - 10px);
     float: right;
@@ -29,6 +29,7 @@
     margin-top: 5px;
     margin-bottom: 5px;
     border-radius: 7px;
+
 }
 
 .budgetSelectedCategory{
@@ -36,7 +37,7 @@
     border-radius: 50px 50px 7px 7px;
     width: 475px;
     height: 195px;
-    bottom: 8px;
+    bottom: 4px;
     position: fixed;
     padding: 20px;
     transition: 0.7s;
@@ -85,7 +86,7 @@
     border-radius: 7px 7px 50px 50px;
     width: 475px;
     height: 90px;
-    top: 65px;
+    top: 60px;
     position: fixed;
     padding: 20px;
     transition: 0.7s;
@@ -97,23 +98,20 @@
 }
 
 .budgetNavPanel{
-    background-color: rgb(20, 22, 28);
+    background-color: rgb(15, 16, 21);
     width: 245px;
     height: calc(100% - 10px);
     float: left;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin: 5px;
     border-radius: 7px;
 }
 
 .budgetNavNavigationHeader{
     background-color: rgb(27, 29, 36);
     border-radius: 7px 7px 25px 25px;
-    width: 240px;
+    width: 245px;
     height: 50px;
-    top: 65px;
+    top: 61px;
     position: fixed;
     padding: 5px;
     overflow-y: hidden;
@@ -126,7 +124,7 @@
 .budgetNavActionHeader{
     background-color: rgb(27, 29, 36);
     border-radius: 7px 7px 25px 25px;
-    width: 240px;
+    width: 245px;
     height: 50px;
     padding: 5px;
     margin-top: 10px;
@@ -143,3 +141,50 @@
 
 }
 
+.budgetNavigationInfoPanelMain{
+    position: fixed;
+    height: calc(100% - 375px);
+    width: 475px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    overflow-y: auto;
+    margin-top: 100px;
+}
+
+.expenseCategoryPanel {
+    margin-top: 10px;
+    margin-right: 5px;
+    background: rgb(27, 29, 36);
+}
+
+.expenseCategoryRow{
+    background: #30303a;
+}
+
+.expenseCategoryRow1{
+    background: #30303a;
+}
+
+.expenseCategoryRow:hover{
+    background: #1b1d24;
+}
+
+.expenseCategoryRow1:hover{
+    background: #1b1d24;
+}
+
+.expenseCategoryTable{
+    border-radius: 10px;
+}
+.expenseCategoryEditIconStack{
+   width: 10px;
+
+    background: #2bc800;
+    display: none;
+}
+
+@media only screen and (max-width: 120px) {
+    .expenseCategoryEditIconStack {
+        display: none;
+    }
+}
