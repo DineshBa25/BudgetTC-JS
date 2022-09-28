@@ -1,16 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import Typography from "@mui/material/Typography";
-import {Badge, Button, Calendar, Divider, Form, IconButton, InputNumber, Nav, Table} from "rsuite";
-import List from "rsuite/List";
-import EditIcon from "@rsuite/icons/Edit";
-import App from "../../App";
-import themeSet from "../../App";
+import {Button, Form, InputNumber, Nav, Table} from "rsuite";
 import {ReflexContainer, ReflexElement, ReflexSplitter} from "react-reflex";
 import Box from "@mui/material/Box";
-import {createTheme, Fab, Skeleton, SpeedDial, Stack} from "@mui/material";
+import {createTheme, Fab, SpeedDial, Stack} from "@mui/material";
 import {Add, ImportExportRounded, Print} from "@mui/icons-material";
 import {CompanyProfile, MiniChart, TechnicalAnalysis} from "react-tradingview-embed";
-import SI from "nodejs-stock-info";
+
 
 
 const CustomNav = ({active, onSelect, ...props}) => {
@@ -98,17 +94,16 @@ function InvestmentTab() {
 }
 
 function About({active, setActiveSymbol}) {
-    const [text1, setText1] = React.useState('');
 
-    if (active == "News") {
+    if (active === "News") {
         return (
             <div>
                 <h2>First Tab</h2>
             </div>
         );
-    } else if (active == "Stocks" || active == "home") {
+    } else if (active === "Stocks" || active === "home") {
         return (<StockTable setActiveSymbol={setActiveSymbol}/>);
-    } else if (active == "Cryptocurrencies") {
+    } else if (active === "Cryptocurrencies") {
         return (<div className={'box5'}><CryptoTable/></div>)
     } else {
         return (<div/>);
@@ -119,23 +114,6 @@ function About({active, setActiveSymbol}) {
 function StockTable({setActiveSymbol}) {
     const [active, setActive] = React.useState('AAPL');
 
-    const [symbol1, setSymbol1] = MyHook()
-    const SI = require('nodejs-stock-info')
-
-    const aapl = new SI("AAPL")
-
-    const darkTheme = createTheme({
-        palette: {
-            mode: 'dark',
-        },
-    });
-
-    const actions = [
-        {icon: <Add/>, name: 'Add Equity'},
-        {icon: <Print/>, name: 'Print (Not Available)'},
-    ];
-
-    const InputDollar = <InputNumber prefix="$"/>;
     return (
         <div>
             <div className={'box6'}>
@@ -1024,21 +1002,9 @@ const MyHook = () => {
 function CryptoTable() {
     const [active, setActive] = React.useState('BTCUSD');
 
-    const [symbol1, setSymbol1] = MyHook()
     const SI = require('nodejs-stock-info')
 
-    const aapl = new SI("AAPL")
 
-    const darkTheme = createTheme({
-        palette: {
-            mode: 'dark',
-        },
-    });
-
-    const actions = [
-        {icon: <Add/>, name: 'Add Equity'},
-        {icon: <Print/>, name: 'Print (Not Available)'},
-    ];
     return (
         <ReflexContainer orientation={"vertical"}>
             <ReflexElement className="left-pane" flex={0.6}>
