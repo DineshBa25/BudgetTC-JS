@@ -1,46 +1,84 @@
 
 import React from "react";
-import {Stack} from "rsuite";
+import {Popover, Stack, Whisper} from "rsuite";
 import ArrowLeftLineIcon from '@rsuite/icons/ArrowLeftLine';
 import ArrowRightLineIcon from '@rsuite/icons/ArrowRightLine';
+import "./Calendar.css";
+import dayjs from "dayjs";
 
-const DatePickerTC = ({value, setValue}) => {
-
-
-    //const [open, setOpen] = React.useState(false);
-
-    const handleOnDateClick = () => {
-        console.log("date clicked");
+/**
+ * Manages the items used by the calendar and the budget page based on the month selected.
+ * @param value
+ * @param setValue
+ * @returns {JSX.Element}
+ * @constructor
+ */
+class DatePickerTC extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            monthValue: new Date().getMonth()+1,
+            //todays year
+            yearValue: new Date().getFullYear(),
+        }
     }
-    const handleLeftArrowClick = () => {
-        console.log("left arrow clicked");
+
+    handleMonthDecrement = () => {
+        if (this.state.monthValue === 1) {
+            this.setState({
+                monthValue: 12,
+                yearValue: this.state.yearValue - 1
+            }, () => {
+                console.log("Month decremented to: " + this.state.monthValue);
+                this.props.modifyStateForMonthView(this.state.monthValue, this.state.yearValue);
+            })
+        } else {
+            this.setState({
+                monthValue: this.state.monthValue - 1
+            }, () => {
+                console.log("Month decremented to: " + this.state.monthValue);
+                this.props.modifyStateForMonthView(this.state.monthValue, this.state.yearValue);
+            })}
     }
-    const handleRightArrowClick = () => {
-        console.log("right arrow clicked");
+
+    handleMonthIncrement = () => {
+        if (this.state.monthValue === 12) {
+            this.setState({
+                monthValue: 1,
+                yearValue: this.state.yearValue + 1
+            }, () => {
+                console.log("Month incremented to: " + this.state.monthValue);
+                this.props.modifyStateForMonthView(this.state.monthValue, this.state.yearValue);
+            })} else {
+
+            this.setState({
+                monthValue: this.state.monthValue + 1
+            }, () => {
+                console.log("Month incremented to: " + this.state.monthValue);
+                this.props.modifyStateForMonthView(this.state.monthValue, this.state.yearValue);
+            })}
     }
 
-    /*<Stack direction={"row"} justifyContent={"center"} spacing={20}>
+    render() {
+        let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const speaker = (
+            <Popover title="Title">
 
-                <DatePicker oneTap format="yyyy MMM" size={"lg"} style={{ width: 150 }} />
+            </Popover>
+        );
 
+        return (
+            <Stack justifyContent={"center"} >
+                <div onClick={() => this.handleMonthDecrement()}><ArrowLeftLineIcon className={"leftArrow"}/></div>
+                <Whisper placement="bottom" trigger="hover" controlId="control-id-hover-enterable"
+                         speaker={speaker} enterable>
+                    <div className="date-picker"><h2 className={"monthSelectorMainText"}>{months[this.state.monthValue-1] + " " + this.state.yearValue} </h2></div>
+                </Whisper>
 
-                <ButtonMUI variant="outlined" color={'info'}
-                           startIcon={<ImportIcon/>}>
-                    Import
-                </ButtonMUI>
-            <IconButtonMUI variant="" color={'info'}
-                         ><MoreHorizTwoTone/></IconButtonMUI>
+                <div onClick={() => this.handleMonthIncrement()}><ArrowRightLineIcon className={"rightArrow"} /></div>
+             </Stack>
 
-        </Stack>*/
-    return <div >
-        <Stack justifyContent={"center"} direction={"row"}>
-            <div onClick={handleLeftArrowClick}><ArrowLeftLineIcon style={{fontSize: "3em", cursor: "pointer"}}/></div>
-            <div onClick={handleOnDateClick} style={{ cursor: "pointer"}}><h2>October 2022</h2></div>
-            <div onClick={handleRightArrowClick}><ArrowRightLineIcon style={{fontSize: "3em" , cursor: "pointer"}} /></div>
-        </Stack>
-
-    </div>
-
-
+        );
+    }
 }
 export default DatePickerTC;

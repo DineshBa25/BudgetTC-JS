@@ -185,7 +185,7 @@ const Login = () => {
                 >
                     <Form.Group controlId="email">
                         <Form.ControlLabel>Email</Form.ControlLabel>
-                        <Form.Control name="email" />
+                        <Form.Control name="email" onKeyPress={pressed}/>
                     </Form.Group>
                     <TextField name="password" label="Password" type={visible ? 'text' : 'password'} help={
                         <Checkbox style={{translate: "30"}} onChange={(value, checked) => {

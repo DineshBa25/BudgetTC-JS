@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import Typography from "@mui/material/Typography";
 import {Button, Form, InputNumber, Nav, Table} from "rsuite";
 import {ReflexContainer, ReflexElement, ReflexSplitter} from "react-reflex";
 import Box from "@mui/material/Box";
-import {createTheme, Fab, SpeedDial, Stack} from "@mui/material";
-import {Add, ImportExportRounded, Print} from "@mui/icons-material";
+import { Fab, SpeedDial, Stack} from "@mui/material";
+import {Add, ImportExportRounded} from "@mui/icons-material";
 import {CompanyProfile, MiniChart, TechnicalAnalysis} from "react-tradingview-embed";
 
 
@@ -894,18 +894,13 @@ function StockTable({setActiveSymbol}) {
                         <Table.Column width={150}>
                             <Table.HeaderCell>Price</Table.HeaderCell>
                             <Table.Cell>
-                                {rowData => {
-                                    function handleAction() {
-                                        alert(`id:${rowData.symbol}`);
-                                    }
-
-                                    return (
+                                {/*rowData => { function handleAction() { alert(`id:${rowData.symbol}`);} return (
                                         <h6>
                                             Unavailable
                                         </h6>
 
-                                    );
-                                }}</Table.Cell>
+                                    );*/
+                                } Unavailable</Table.Cell>
                         </Table.Column>
 
 
@@ -926,7 +921,7 @@ function StockTable({setActiveSymbol}) {
 
                                     return (
                                         <span>
-                <a onClick={handleAction}> Edit </a> | <a onClick={handleAction}> Remove </a>
+                <a onClick={handleAction} href={"Edit"}> Edit </a> | <a href={"Remove"} onClick={handleAction}> Remove </a>
               </span>
                                     );
                                 }}
@@ -985,24 +980,12 @@ function StockTable({setActiveSymbol}) {
     );
 }
 
-const MyHook = () => {
-    let symbol1;
-    let setSymbol1;
-    [symbol1, setSymbol1] = useState('GE')
-    // use effect for example if you need to run something at state updates
-    useEffect(() => {
-        // do something on foo changes
-        console.log(symbol1)
-    }, [symbol1])
 
-    return [symbol1, setSymbol1] // returning state and setState you can use them by your component
-
-}
 
 function CryptoTable() {
     const [active, setActive] = React.useState('BTCUSD');
 
-    const SI = require('nodejs-stock-info')
+
 
 
     return (
@@ -1107,7 +1090,7 @@ function CryptoTable() {
 
                                             return (
                                                 <span>
-                <a onClick={handleAction}> Edit </a> | <a onClick={handleAction}> Remove </a>
+                <a onClick={handleAction} href={"Edit"}> Edit </a> | <a onClick={handleAction} href={"clear"}> Remove </a>
               </span>
                                             );
                                         }}

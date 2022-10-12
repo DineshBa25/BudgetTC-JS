@@ -3,7 +3,10 @@ import ReloadIcon from "@rsuite/icons/Reload";
 import {updateUserDataInFireStore} from "../pages/auth/firebase";
 import GearIcon from "@rsuite/icons/Gear";
 import AccountInfo from "./AccountInfo";
-import React from "react";
+import React, {useState} from "react";
+import {useSelector} from "react-redux";
+import {setQuote} from "../pages/userDataSlice";
+import {store} from "../redux/store";
 
 const HeaderBar = () => {
 
@@ -16,7 +19,10 @@ const HeaderBar = () => {
     )
 
 
-    const [quote1, setQuote] = React.useState(5);
+
+
+    const [quote, setQuote] = useState(store.getState().userData.userDataDocument.quote);
+
 
     const [open, setOpen] = React.useState(false);
 
@@ -83,7 +89,7 @@ const HeaderBar = () => {
                 <div>
                     <Stack alignItems={"flex-end"}>
                         <h6 style={{marginLeft: 20, color: "#797979", marginTop: 23}}>
-                            <i>{(quote1 == null) ? "null" : quotes[quote1]}</i>
+                            <i>{(quote === undefined) ? "null" : quotes[quote]}</i>
                         </h6>
                         <IconButton size={"xs"} icon={<ReloadIcon/>}
                                     loading={quoteReload}

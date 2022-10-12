@@ -1,3 +1,27 @@
+.budgetNotAvailablePanel {
+    background: rgb(27, 29, 36);
+    border-radius: 20px;
+    padding: 20px;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    margin: 20px;
+}
+
+.budgetInfoInvalidMonthNotice{
+    color: #fff;
+    text-align: center;
+    margin: 150px 10px 10px;
+    padding: 20px
+}
+
+.budgetNavInvalidMonthNotice{
+    color: #fff;
+    text-align: center;
+    margin: 20px 10px 10px;
+    padding: 20px
+}
+
 .budgetScrollablePanel {
     width: calc(100% - 735px);
     height: calc(100% - 0px);
@@ -20,8 +44,22 @@
     border-bottom-right-radius: 20px;
 }
 
+.budgetScrollableNav{
+    width: calc(100% - 950px);
+    z-index: 1;
+    position: fixed;
+    align-items: center;
+    text-align: center;
+    background: #1b1d24;
+    margin-left: 80px;
+    
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.5);
+}
+
 .budgetNavigationInfoPanel{
-    background-color: rgb(15, 16, 21);
+    background-color:  rgb(18, 21, 26);
     width: 475px;
     height: calc(100% - 10px);
     float: right;
@@ -98,7 +136,7 @@
 }
 
 .budgetNavPanel{
-    background-color: rgb(15, 16, 21);
+    background-color: rgb(18, 21, 26);
     width: 245px;
     height: calc(100% - 10px);
     float: left;
@@ -140,11 +178,15 @@
     margin-top: 20px;
 
 }
+.budgetNavActionItems.action-menu-button{
+    background: #00c853;
+}
 
 .budgetNavigationInfoPanelMain{
     position: fixed;
-    height: calc(100% - 375px);
+    height: calc(100% - 330px);
     width: 475px;
+    margin-bottom: 10px;
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
     overflow-y: auto;
@@ -152,7 +194,7 @@
 }
 
 .expenseCategoryPanel {
-    margin-top: 10px;
+    margin-top: 5px;
     margin-right: 5px;
     background: rgb(27, 29, 36);
 }
@@ -185,6 +227,159 @@
 
 @media only screen and (max-width: 120px) {
     .expenseCategoryEditIconStack {
+        display: none;
+    }
+}
+
+
+.budgetCategoryPanel{
+    margin-top: 10px;
+    margin-right: 5px;
+    background: rgb(27, 29, 36);
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.budget-category-header{
+    background: #30303a;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 0px 15px;
+    width: fit-content;
+    margin-left: 10px;
+
+}
+
+.budget-category-item-panel{
+    background: #30303a;
+    border-radius: 15px;
+    padding: 5px 10px;
+
+    overflow-x: auto;
+}
+.budget-category-item {
+    background: #30303a;
+    padding: 5px 5px;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-color: #434350;
+    border-radius: 15px;
+    transition: 0.3s;
+
+}
+
+.budget-category-item-panel-grid{
+    display: grid;
+    grid-template-columns: minmax(150px, 350px) minmax(110px, 125px) 1fr;
+    grid-template-rows: 1fr;
+    gap: 32px 10px;
+    grid-template-areas:
+    "name amount info";
+
+
+}
+.budget-category-item:hover {
+    background: #1b1d24;
+    padding: 10px 10px;
+}
+
+.budget-category-item__name {
+    grid-area: name;
+
+}
+
+.budget-category-item__amount{
+    grid-area: amount;
+}
+.budget-category-item__info{
+    grid-area: info;
+    padding: 5px;
+}
+
+.budget-category-amount{
+    color: #a80000;
+    height: 30px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background: rgb(27, 29, 36);
+    border-radius: 5px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.budget-category-item__info__modification-button{
+    background: #2bc800;
+    border-radius: 5px;
+    padding: 5px;
+    margin-right: 5px;
+}
+
+.budget-category-item__info__feedback{
+    color: #1a9102;
+
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.budget-category-item__info__expense-list-avatar {
+    font-weight: bold;
+    font-size: 20px;
+    background: #a80000;
+}
+
+.budget-category-item__info__edit-icon {
+    color: #1e88e5;
+}
+
+.budget-category-item__info__edit-icon:hover {
+    color: #99cefd;
+}
+
+.budget-category-item__info__delete-icon {
+    color: #d91c1c;
+}
+
+.budget-category-item__info__delete-icon:hover {
+    color: #ff9393;
+}
+
+.action-menu-button{
+    background-color: #1b5e20;
+}
+
+.action-menu-button:hover{
+    background: #1b1d24;
+}
+
+@media (max-width: 1300px) {
+    .budgetNavigationInfoPanel{
+        display: none;
+    }
+    .budgetScrollablePanel{
+        width: calc(100% - 260px);
+    }
+    .budgetScrollableNav{
+        width: calc(100% - 475px);
+    }
+
+}
+
+@media (max-width: 800px) {
+    .budgetNavPanel{
+        display: none;
+    }
+    .budgetScrollableNav{
+        width: calc(100% - 85px);
+        margin-left: 10px;
+    }
+    .budgetScrollablePanel{
+        width: calc(100% - 5px);
+        margin-left: 5px;
+    }
+    .budget-category-item__info__feedback{
+        display: none;
+    }
+    .budget-category-item__info__expense-list-avatar{
         display: none;
     }
 }

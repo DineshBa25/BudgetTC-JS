@@ -13,8 +13,6 @@ import {
 import Typography from "@mui/material/Typography";
 import List from "rsuite/List";
 import EditIcon from "@rsuite/icons/Edit";
-import {DatePicker, LocalizationProvider} from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import * as dateFns from "date-fns";
 
 let themeSet = "dark"
@@ -326,17 +324,7 @@ function AddWidget() {
                 style={{top: '0px'}}
                 fullWidth
             />,
-        "4":
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                    label="Basic example"
-                    onChange={(newValue) => {
-                        console.log(newValue)
-                    }}
-                    renderInput={(params) => <TextField {...params} fullWidth/>}
 
-                />
-            </LocalizationProvider>
     };
 
     return (

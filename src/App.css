@@ -103,22 +103,20 @@ article {
 
 .box4 {
     background-color: #2a2d33;
-    background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.19) 0%, rgba(0, 216, 255, 0.22) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background3.jpg?alt=media&token=4017870c-833c-4fd2-8b0b-117c800d88ba");
+    background-image: linear-gradient(19deg, rgba(16, 48, 155, 0.85) 0%, rgba(0, 216, 255, 0.84) 100%), url("https://firebasestorage.googleapis.com/v0/b/budgettc-c8e98.appspot.com/o/background1.jpg?alt=media&token=4f5a8115-c455-48b7-b545-d53271d9fcac");
     background-size: 100% 100%;
     position: fixed;
     height: 100%;
     width: 100%;
-
+    
 }
 
 .box5 {
-
     position: fixed;
     height: calc(100% - 100px);
     width: calc(100% - 55px);
     overflow-y: auto;
     float: left;
-
 }
 
 .box6 {

@@ -1,0 +1,28 @@
+.leftArrow{
+    font-size: 3em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.leftArrow:hover{
+    color: #1e88e5;
+}
+
+.rightArrow{
+    font-size: 3em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.rightArrow:hover{
+    color: #1e88e5;
+}
+
+.monthSelectorMainText{
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.monthSelectorMainText:hover{
+    color: #1e88e5;
+}
