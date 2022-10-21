@@ -4,7 +4,6 @@ import {Popover, Stack, Whisper} from "rsuite";
 import ArrowLeftLineIcon from '@rsuite/icons/ArrowLeftLine';
 import ArrowRightLineIcon from '@rsuite/icons/ArrowRightLine';
 import "./Calendar.css";
-import dayjs from "dayjs";
 
 /**
  * Manages the items used by the calendar and the budget page based on the month selected.
@@ -29,14 +28,14 @@ class DatePickerTC extends React.Component {
                 monthValue: 12,
                 yearValue: this.state.yearValue - 1
             }, () => {
-                console.log("Month decremented to: " + this.state.monthValue);
+                //console.log("Month decremented to: " + this.state.monthValue);
                 this.props.modifyStateForMonthView(this.state.monthValue, this.state.yearValue);
             })
         } else {
             this.setState({
                 monthValue: this.state.monthValue - 1
             }, () => {
-                console.log("Month decremented to: " + this.state.monthValue);
+                //console.log("Month decremented to: " + this.state.monthValue);
                 this.props.modifyStateForMonthView(this.state.monthValue, this.state.yearValue);
             })}
     }
@@ -47,14 +46,14 @@ class DatePickerTC extends React.Component {
                 monthValue: 1,
                 yearValue: this.state.yearValue + 1
             }, () => {
-                console.log("Month incremented to: " + this.state.monthValue);
+                //console.log("Month incremented to: " + this.state.monthValue);
                 this.props.modifyStateForMonthView(this.state.monthValue, this.state.yearValue);
             })} else {
 
             this.setState({
                 monthValue: this.state.monthValue + 1
             }, () => {
-                console.log("Month incremented to: " + this.state.monthValue);
+                //console.log("Month incremented to: " + this.state.monthValue);
                 this.props.modifyStateForMonthView(this.state.monthValue, this.state.yearValue);
             })}
     }
