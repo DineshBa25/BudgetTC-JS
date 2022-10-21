@@ -88,7 +88,7 @@
 
 .budgetSelectedCategory:hover {
     height: 350px;
-    overflow-y: auto;
+    overflow-y: auto
 }
 
 .moneyText{
@@ -184,7 +184,7 @@
 
 .budgetNavigationInfoPanelMain{
     position: fixed;
-    height: calc(100% - 330px);
+    height: calc(100% - 350px);
     width: 475px;
     margin-bottom: 10px;
     border-bottom-right-radius: 20px;
@@ -238,18 +238,52 @@
     background: rgb(27, 29, 36);
     border-radius: 15px;
     padding: 15px;
+    transition: 0.3s;
+
+
 }
 
 .budget-category-header{
     background: #30303a;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    padding: 0px 15px;
+    padding: 0 15px;
     width: fit-content;
     margin-left: 10px;
 
+
+    border-color: #900000;
+
+    border-top-width: 3px;
+    border-top-style: solid;
+    border-left-width: 1px;
+
+    border-left-style: solid;
+    border-right-width: 1px;
+    border-right-style: solid;
 }
 
+
+.budget-income-category-header{
+    background: #30303a;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 0 15px;
+    width: fit-content;
+    margin-left: 10px;
+    border-top-width: 3px;
+    border-top-style: solid;
+    border-top-color: #008c0d;
+
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-left-color: #008c0d;
+
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: #008c0d;
+
+}
 .budget-category-item-panel{
     background: #30303a;
     border-radius: 15px;
@@ -257,14 +291,18 @@
 
     overflow-x: auto;
 }
+
+
+
 .budget-category-item {
     background: #30303a;
     padding: 5px 5px;
     border-bottom-width: 2px;
     border-bottom-style: solid;
-    border-bottom-color: #434350;
+    border-bottom-color: #7d8089;
     border-radius: 15px;
     transition: 0.3s;
+
 
 }
 
@@ -278,9 +316,28 @@
 
 
 }
+
+.budget-income-category-item{
+    background: #30303a;
+    padding: 5px 5px;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-color: #7d8089;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.budget-income-category-item:hover{
+    background: #1b1d24;
+    padding: 5px 10px;
+    border-bottom-color: #0f0;
+}
+
 .budget-category-item:hover {
     background: #1b1d24;
-    padding: 10px 10px;
+    padding: 5px 10px;
+
+    border-bottom-color: #ff0000;
 }
 
 .budget-category-item__name {
@@ -294,6 +351,15 @@
 .budget-category-item__info{
     grid-area: info;
     padding: 5px;
+}
+
+.budget-category-name{
+    color: #a3a8b2;
+    transition: 0.3s;
+}
+
+.budget-category-name:hover{
+    color: #5692be;
 }
 
 .budget-category-amount{
@@ -324,7 +390,10 @@
 .budget-category-item__info__expense-list-avatar {
     font-weight: bold;
     font-size: 20px;
-    background: #a80000;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #900000;
+    background: #0035fc;
 }
 
 .budget-category-item__info__edit-icon {
@@ -343,6 +412,33 @@
     color: #ff9393;
 }
 
+.budget-category-modification-buttongroup{
+    display: flex;
+    margin-top: 10px;
+    flex-direction: row;
+    justify-content: center;
+    -webkit-transition: .5s all;
+    opacity: 0;
+    height: 0;
+    transition-delay: 0.2s;
+}
+
+/*animate display of modification buttons when expenseCategory panel is hovered*/
+.budgetCategoryPanel:hover .budget-category-modification-buttongroup{
+    opacity: 1;
+    height: 20px;
+}
+
+
+.budget-color-picker__color{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 5px;
+    cursor: pointer;
+}
+
+
 .action-menu-button{
     background-color: #1b5e20;
 }
@@ -350,6 +446,8 @@
 .action-menu-button:hover{
     background: #1b1d24;
 }
+
+
 
 @media (max-width: 1300px) {
     .budgetNavigationInfoPanel{
