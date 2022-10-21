@@ -6,9 +6,8 @@ import {
     CustomProvider,
     Sidenav,
     Nav,
-    Navbar
+    Navbar, useToaster
 } from 'rsuite';
-import ModelIcon from '@rsuite/icons/Model';
 import {Dashboard} from "@rsuite/icons";
 import CalendarIcon from '@rsuite/icons/Calendar';
 import BarChartIcon from '@rsuite/icons/BarChart';
@@ -32,15 +31,22 @@ import {setRetirementCalcData401K} from "./pages/userDataSlice";
 import Signout from "./pages/auth/Signout";
 import PageNotFound from "./pages/auth/PageNotFound";
 import ProtectedRoute from "./utilities/ProtectedRoute";
-import LearnTab from "./pages/main-tabs/learn/LearnTab";
 import DashboardTab from "./pages/main-tabs/Dashboard/Dashboard"
 import CalendarTab from "./pages/main-tabs/calendar/CalendarTab";
 import {auth} from "./configs/firebaseConfig";
 import BudgetClass from "./pages/main-tabs/Budget/BudgetClass";
 import HeaderBar from "./components/HeaderBar";
 
+export function withToaster(Component) {
+    return function WrapperComponent(props) {
+        const toaster = useToaster();
+        return <Component {...props} toaster={toaster}/>;
+    };
+}
+
 function App() {
     const [activeKey, setActiveKey] = React.useState('1');
+
 
 
     const darkTheme = createTheme({
@@ -88,6 +94,9 @@ function App() {
 
     const [open, setOpen] = React.useState(false);
 
+
+    const toaster = useToaster();
+
     console.log("App loaded")
     return (
         <div>
@@ -116,10 +125,6 @@ function App() {
                                                                           icon={<Dashboard/>}>
                                                                     Dashboard
                                                                 </Nav.Item>
-                                                                <Nav.Item eventKey={2} as={NavLink} href="/app/learn"
-                                                                          icon={<ModelIcon/>}>
-                                                                    Learn
-                                                                </Nav.Item>
                                                                 <Nav.Item eventKey={4} as={NavLink}
                                                                           href="/app/investments"
                                                                           icon={<BarChartIcon/>}>
@@ -133,9 +138,9 @@ function App() {
                                                                           icon={<CalendarIcon/>}>
                                                                     Calendar
                                                                 </Nav.Item>
-                                                                <Nav.Item eventKey={7} as={NavLink} href="/app/budget-test"
+                                                                <Nav.Item eventKey={7} as={NavLink} href="/app/budget"
                                                                           icon={<TableIcon/>}>
-                                                                    Calendar
+                                                                    Budget Book
                                                                 </Nav.Item>
                                                             </Nav>
                                                         </Sidenav.Body>
@@ -152,11 +157,13 @@ function App() {
                                 </ProtectedRoute>}>
                                 <Route path="dashboard"
                                        element={<div className={'box4'}><DashboardTab/></div>}/>
-                                <Route path="learn" element={<div className={'box4'}><LearnTab/></div>}/>
                                 <Route path="investments"
                                        element={<div className={'box4'}><InvestmentTab/></div>}/>
                                 <Route path="tools" element={<div className={'box4'}><ToolsTab/></div>}/>
-                                <Route path="budget-test/*" element={<div className={'box4'}><BudgetClass/></div>}/>
+                                <Route path="budget/*" element={
+                                    <div className={'box4'}>
+                                        <BudgetClass toaster={toaster}/>
+                                     </div>}/>
                                 <Route path="calendar"
                                        element={<div className={'box4'}><CalendarTab/></div>}/>
                             </Route>
