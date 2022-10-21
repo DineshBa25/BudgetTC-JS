@@ -11,12 +11,12 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import {formatter} from "./BudgetFormatters";
 import {Button as RSButton} from 'rsuite'; // I'm using rsuite for the rest of the app
-
+import DeleteIcon from "@mui/icons-material/Delete";
+import Typography from "@mui/material/Typography";
 
 
 class BudgetExpenseItemTransferList extends React.Component{
     constructor(props){
-        console.log("BudgetExpenseItemTransferList left", props.left, "right", props.right);
         super(props);
         this.state = {
             loading: true,
@@ -28,11 +28,6 @@ class BudgetExpenseItemTransferList extends React.Component{
         };
     }
 
-    componentDidMount() {
-        this.setState({
-            loading: false,
-        });
-    }
 
     //function that checks if there are any changes between the original and current state
     //if there are changes, it returns true, otherwise false
@@ -41,18 +36,29 @@ class BudgetExpenseItemTransferList extends React.Component{
         let right = this.state.right;
         let originalLeft = this.state.originalLeft;
         let originalRight = this.state.originalRight;
-
-        for (let i = 0; i < left.length; i++) {
-            if (originalLeft.includes(left[i]) === false) {
-                return true;
+        let leftChanges = false;
+        let rightChanges = false;
+        if (left.length !== originalLeft.length){
+            leftChanges = true;
+        } else {
+            for (let i = 0; i < left.length; i++){
+                if (left[i].id !== originalLeft[i].id){
+                    leftChanges = true;
+                    break;
+                }
             }
         }
-
-        for (let i = 0; i < right.length; i++) {
-            if (originalRight.includes(right[i]) === false) {
-                return true;
+        if (right.length !== originalRight.length){
+            rightChanges = true;
+        } else {
+            for (let i = 0; i < right.length; i++){
+                if (right[i].id !== originalRight[i].id){
+                    rightChanges = true;
+                    break;
+                }
             }
         }
+        return leftChanges || rightChanges;
     }
 
 
@@ -77,13 +83,7 @@ class BudgetExpenseItemTransferList extends React.Component{
     }
 
     union = (a, b) => {
-        let temp = [...a, ...this.not(b, a)]
-        console.log(temp)
-        //make sure that the first item in the array is temp1 and increment by 1 for each new item
-        for (let i = 0; i < temp.length; i++){
-            temp[i][0] = "item" + (i + 1);
-        }
-        return temp;
+        return [...a, ...this.not(b, a)];
     }
 
     leftChecked = () => {
@@ -136,6 +136,28 @@ class BudgetExpenseItemTransferList extends React.Component{
         }));
     }
 
+    handleAllRight = () => {
+        this.setState((state) => ({
+            right: this.union(state.right, state.left),
+            left: [],
+        }));
+    }
+
+    handleAllLeft = () => {
+        this.setState((state) => ({
+            left: this.union(state.left, state.right),
+            right: [],
+        }));
+    }
+
+    handleDeleteCheckedBothSide = () => {
+        this.setState((state) => ({
+            left: this.not(state.left, this.leftChecked()),
+            right: this.not(state.right, this.rightChecked()),
+            checked: this.not(state.checked, this.leftChecked()),
+        }));
+    }
+
     customList = (title, items, originalItems) => (
         <Card>
             <CardHeader
@@ -158,7 +180,7 @@ class BudgetExpenseItemTransferList extends React.Component{
                 subheader={`${this.numberOfChecked(items)}/${items.length} selected`}
             />
             <Divider />
-            <List sx={{padding: 1}} dense component="div" role="list">
+            <List sx={{padding: 1}} dense component="div" role="list" style={{height: 150,  overflowY: "auto"}}>
                 {items.map((value) => {
                     const labelId = `transfer-list-all-item-${value}-label`;
 
@@ -175,6 +197,7 @@ class BudgetExpenseItemTransferList extends React.Component{
                             role="listitem"
                             button
                             onClick={this.handleToggle(value)}
+                            style={{borderStyle: !isOriginal ? "solid": "none", borderWidth: 2, borderColor: "red"}}
                         >
                             <ListItemIcon>
                                 <Checkbox
@@ -184,7 +207,10 @@ class BudgetExpenseItemTransferList extends React.Component{
                                     inputProps={{'aria-labelledby': labelId}}
                                 />
                             </ListItemIcon>
-                            <ListItemText id={labelId} primary={value[1].name} style={{color: !isOriginal ? 'red' : 'white'}}/>
+                            <ListItemText>
+                                    <Typography fontSize={13}>{value[1].name}</Typography>
+                                <Typography color={"red"} fontSize={12}>{formatter.format(value[1].amount)} <b style={{color: "#ababab"}}>({(value[1].date !== undefined)? value[1].date : "No date"})</b></Typography>
+                            </ListItemText>
                         </ListItem>
                     );
                 })}
@@ -211,12 +237,13 @@ class BudgetExpenseItemTransferList extends React.Component{
                 </center>
                 <hr/>
                 <Grid container spacing={2} justify="center" alignItems="center">
-                    <Grid item>{this.customList('Unallocated Expenses', left, this.state.originalLeft)}</Grid>
-                    <Grid item>
+                    <Grid flex={6} item>{this.customList('Unallocated Expenses', left, this.state.originalLeft)}</Grid>
+                    <Grid width={100} item>
                             <Grid container direction="column" alignItems="center">
                                 <Button
                                     variant="outlined"
                                     size="small"
+                                    className="button"
                                     onClick={this.handleCheckedRight}
                                     disabled={this.leftChecked().length === 0}
                                     aria-label="move selected right"
@@ -226,15 +253,46 @@ class BudgetExpenseItemTransferList extends React.Component{
                                 <Button
                                     variant="outlined"
                                     size="small"
+                                    className="button"
                                     onClick={this.handleCheckedLeft}
                                     disabled={this.rightChecked().length === 0}
                                     aria-label="move selected left"
                                 >
                                     &lt;
                                 </Button>
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    className="button"
+                                    onClick={this.handleAllRight}
+                                    disabled={left.length === 0}
+                                    aria-label="move all right"
+                                >
+                                    &gt;&gt;
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    className="button"
+                                    onClick={this.handleAllLeft}
+                                    disabled={right.length === 0}
+                                    aria-label="move all left"
+                                >
+                                    &lt;&lt;
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    color={"error"}
+                                    className="button"
+                                    onClick={this.handleDeleteCheckedBothSide}
+                                    disabled={this.leftChecked().length === 0 && this.rightChecked().length === 0}
+                                    aria-label="delete selected">
+                                    <DeleteIcon/>
+                                </Button>
                             </Grid>
                         </Grid>
-                    <Grid item>{this.customList('Allocated Expenses', right, this.state.originalRight)}</Grid>
+                    <Grid flex={6} item>{this.customList('Allocated Expenses', right, this.state.originalRight)}</Grid>
                 </Grid>
                 <hr/>
 
