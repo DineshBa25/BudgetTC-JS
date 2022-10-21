@@ -1,12 +1,9 @@
 import React from 'react';
 import {
-    Badge, Button, FlexboxGrid, Message, Nav, Table
+    Badge, Button, FlexboxGrid, Message, Nav, Notification, Grid, Row, Col
 } from "rsuite";
 import {database} from "../../../configs/firebaseConfig";
-import {ref, onValue, update, get, child} from "firebase/database";
-import {
-    Button as ButtonMUI
-} from "@mui/material";
+import {ref, update, get, child, set} from "firebase/database";
 import {AiOutlinePlus} from "react-icons/ai";
 import {GiAbstract002, GiReceiveMoney, GiTakeMyMoney} from "react-icons/gi";
 import './Budget.css';
@@ -17,9 +14,9 @@ import Chart from "react-apexcharts";
 import {ScaleLoader} from "react-spinners";
 import BudgetActionMenu from "./BudgetActionMenu";
 import ScrollTo from "react-scroll-into-view";
-import IncomeCategory from "./IncomeCategory";
-import BudgetCategory from "./BudgetCategory";
-import {getMonthlyBudgetFromFireStore} from "../../auth/firebase";
+import BudgetCategoryNG from "./BudgetCategoryNG";
+import IncomeCategoryNG from "./IncomeCategoryNG";
+import {Button as ButtonMUI} from "@mui/material";
 
 class BudgetClass extends React.Component {
     constructor(props) {
@@ -51,35 +48,42 @@ class BudgetClass extends React.Component {
                         }, theme: 'light'
                     }]
                 }
-            }, currentView: "Budget", lastSaved: "None", selectedCategory: "None", current: {
-                categories: [], budgetCatMap: {}, totalAmountAllocated: 0, income: {
-                    categories: [], oneTime: [], totalAmountAllocated: 0,
-                }
+            }, currentView: "Budget", lastSaved: "None", selectedCategory: "None",
+            current: {
+                 income: {
+                    categories: [], oneTime: [],
+                },removedCategories: []
             }, next: {
-                categories: [], budgetCatMap: {}, totalAmountAllocated: 0, income: {
-                    categories: [], oneTime: [], totalAmountAllocated: 0,
-                }
+                idList: [], income: {
+                    categories: [], oneTime: []
+                },removedCategories: []
             }, previous: {
-                categories: [], budgetCatMap: {}, totalAmountAllocated: 0, income: {
-                    categories: [], oneTime: [], totalAmountAllocated: 0,
-                }
+                 idList: [], income: {
+                    categories: [], oneTime: []
+                },removedCategories: []
             }, draft: {
-                categories: [], budgetCatMap: {}, totalAmountAllocated: 0, income: {
-                    categories: [], oneTime: [], totalAmountAllocated: 0,
-                }
-            },
+                  idList: [], income: {
+                    categories: [], oneTime: []
+                },removedCategories: []
+            }
         }
     }
 
-    //on component mount, initiate or refresh budget categories and income categories
+    //toaster is used to display messages to the user.
 
+
+    errorMessageNotification = (errorMsg) => (
+        <Notification type={'error'} header={'Sign in Error'}  duration={15000} closable>
+            <h6>The following error occurred while trying to sign you in:</h6>
+            <h8>{errorMsg}</h8>
+        </Notification>
+    )
+
+    //on component mount, initiate or refresh budget categories and income categories
     componentDidMount() {
         setTimeout(() => {
             //get budget categories from firebase so that each category can be updated when with is updated in the realtime database
             get(child(ref(database), "users/testUser")).then((snapshot) => {
-                       let budgetCats;
-//stores all budget categories
-                let budgetCatMap;
 //stores the mapping of budget categories to their names
                 let chartValues;
 //stores all the amounts allocated for each category so that the overview donut chart can display it
@@ -87,80 +91,76 @@ class BudgetClass extends React.Component {
 //stores all the names of the categories so that the overview donut chart can use it
                 let chartColors;
 //stores all the colors of the categories so that the overview donut chart can use it
-                let totalAmountAllocated;
                 let incomeCats;
 //stores all separate use created income categories
                 let oneTimeIncome;
 //stores all one time income(misc income) categories
-                let totalAmountAllocatedIncome;
+
+                let idList;
+
+                let amount;
 //for users/testUser/current update state
                 if (snapshot.exists()) {
-
-                    console.log(typeof (snapshot.val().current["budgetCategories"]))
-                    budgetCats = [];
-                    budgetCatMap = {};
                     chartValues = [];
                     chartNames = [];
                     chartColors = [];
-                    totalAmountAllocated = 0; //stores the total amount allocated for all categories to display in the overview
+                    idList = [];
                     //using the response from the database, looping through each category and adding it to the arrays created above
                     Object.entries(snapshot.val().current["budgetCategories"]).forEach((category) => {
-                        budgetCats.push(category[1]);
-                        budgetCatMap[category[1].name] = category[1];
-                        chartValues.push(category[1].amount);
+                        idList.push(category[0]);
+                        //go through each item in category and add to ammount then push to chartValues
+                        amount = 0;
+                        Object.entries(category[1].items).forEach((item) => {
+                            console.log(item[1].amount)
+                            amount += parseFloat(item[1].amount);
+                        })
+                        chartValues.push(amount);
                         chartNames.push(category[1].name);
                         chartColors.push(category[1].color);
-                        totalAmountAllocated += category[1].amount;
                     });
                     //modifying state with updated arrays so that the values that changed will trigger a rerender
                     incomeCats = [];
                     oneTimeIncome = [];
-                    totalAmountAllocatedIncome = 0;
                     Object.entries(snapshot.val().current["incomeCategories"]).forEach((category) => {
                         //using the response from the database, looping through each category and adding it to the arrays created above
 
-                        totalAmountAllocatedIncome += parseFloat(category[1].amount);
                         if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
 
                     })
                     this.setState({
                         current: {
                             ...this.state.current,
-                            categories: budgetCats,
-                            budgetCatMap: budgetCatMap,
-                            totalAmountAllocated: totalAmountAllocated,
                             income: {
                                 ...this.state[this.state.monthView].income,
-                                categories: incomeCats,
+
                                 oneTime: oneTimeIncome,
-                                totalAmountAllocated: totalAmountAllocatedIncome,
                             },
-                            series: chartValues, labels: chartNames, colors: chartColors,
+                            series: chartValues, labels: chartNames, colors: chartColors, idList: idList
 
                         }
                     })
                     //clear the arrays so that they can be used for the next month
-                    budgetCats = [];
-                    budgetCatMap = {};
                     chartValues = [];
                     chartNames = [];
                     chartColors = [];
-                    totalAmountAllocated = 0;
                     incomeCats = [];
                     oneTimeIncome = [];
-                    totalAmountAllocatedIncome = 0;
+
+                    idList = [];
 
                     //for users/testUser/next update state
                     Object.entries(snapshot.val().next["budgetCategories"]).forEach((category) => {
-                        budgetCats.push(category[1]);
-                        budgetCatMap[category[1].name] = category[1];
-                        chartValues.push(category[1].amount);
+                        idList.push(category[0]);
+                        amount = 0;
+                        Object.entries(category[1].items).forEach((item) => {
+                            console.log(item[1].amount)
+                            amount += parseFloat(item[1].amount);
+                        })
+                        chartValues.push(amount);
                         chartNames.push(category[1].name);
                         chartColors.push(category[1].color);
-                        totalAmountAllocated += category[1].amount;
                     });
                     Object.entries(snapshot.val().next["incomeCategories"]).forEach((category) => {
-                        totalAmountAllocatedIncome += parseFloat(category[1].amount);
                         if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
                     })
                 } else {
@@ -170,206 +170,228 @@ class BudgetClass extends React.Component {
                 this.setState({
                     next: {
                         ...this.state.next,
-                        categories: budgetCats,
-                        budgetCatMap: budgetCatMap,
-                        totalAmountAllocated: totalAmountAllocated,
                         income: {
                             ...this.state.next.income,
-                            categories: incomeCats,
                             oneTime: oneTimeIncome,
-                            totalAmountAllocated: totalAmountAllocatedIncome,
                         },
-                        series: chartValues, labels: chartNames, colors: chartColors,
+                        series: chartValues, labels: chartNames, colors: chartColors, idList: idList
                         }
 
                 })
 
                 //clear the arrays so that they can be used for the previous month
-                budgetCats = [];
-                budgetCatMap = {};
                 chartValues = [];
                 chartNames = [];
                 chartColors = [];
-                totalAmountAllocated = 0;
                 incomeCats = [];
                 oneTimeIncome = [];
-                totalAmountAllocatedIncome = 0;
+                idList =[];
 
 //for users/testUser/previous update state
 
                 Object.entries(snapshot.val().previous["budgetCategories"]).forEach((category) => {
-                    budgetCats.push(category[1]);
-                    budgetCatMap[category[1].name] = category[1];
-                    chartValues.push(category[1].amount);
+                    amount = 0;
+                    Object.entries(category[1].items).forEach((item) => {
+                        console.log(item[1].amount)
+                        amount += parseFloat(item[1].amount);
+                    })
+                    chartValues.push(amount);
                     chartNames.push(category[1].name);
                     chartColors.push(category[1].color);
-                    totalAmountAllocated += category[1].amount;
+                    idList.push(category[0]);
                 });
 
                 Object.entries(snapshot.val().previous["incomeCategories"]).forEach((category) => {
-                    totalAmountAllocatedIncome += parseFloat(category[1].amount);
                     if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
                 })
 
                 this.setState({
                     previous: {
                         ...this.state.previous,
-                        categories: budgetCats,
-                        budgetCatMap: budgetCatMap,
-                        totalAmountAllocated: totalAmountAllocated,
                         income: {
                             ...this.state.previous.income,
-                            categories: incomeCats,
                             oneTime: oneTimeIncome,
-                            totalAmountAllocated: totalAmountAllocatedIncome,
                         },
-                        series: chartValues, labels: chartNames, colors: chartColors,
+                        series: chartValues, labels: chartNames, colors: chartColors, idList: idList
                         }
 
                 })
 
                 //clear the arrays so that they can be used for the draft month
-                budgetCats = [];
-                budgetCatMap = {};
                 chartValues = [];
                 chartNames = [];
                 chartColors = [];
-                totalAmountAllocated = 0;
                 incomeCats = [];
                 oneTimeIncome = [];
-                totalAmountAllocatedIncome = 0;
-
+                idList = [];
                 //for users/testUser/draft update state
                 Object.entries(snapshot.val().draft["budgetCategories"]).forEach((category) => {
-                    budgetCats.push(category[1]);
-                    budgetCatMap[category[1].name] = category[1];
-                    chartValues.push(category[1].amount);
+                    idList.push(category[0]);
+                    amount = 0;
+                    Object.entries(category[1].items).forEach((item) => {
+                        console.log(item[1].amount)
+                        amount += parseFloat(item[1].amount);
+                    })
+                    chartValues.push(amount);
                     chartNames.push(category[1].name);
                     chartColors.push(category[1].color);
-                    totalAmountAllocated += category[1].amount;
                 });
 
                 Object.entries(snapshot.val().draft["incomeCategories"]).forEach((category) => {
-                    totalAmountAllocatedIncome += parseFloat(category[1].amount);
                     if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
                 })
 
                 this.setState({
                     draft: {
                         ...this.state.draft,
-                        categories: budgetCats,
-                        budgetCatMap: budgetCatMap,
-                        totalAmountAllocated: totalAmountAllocated,
                         income: {
                             ...this.state.draft.income,
-                            categories: incomeCats,
                             oneTime: oneTimeIncome,
-                            totalAmountAllocated: totalAmountAllocatedIncome,
                         },
-                        series: chartValues, labels: chartNames, colors: chartColors,
+                        series: chartValues, labels: chartNames, colors: chartColors, idList: idList
                         }
 
                 })
 
                 //read in unallocatedExpenses
                 let  unallocatedExpenses = [];
-                Object.entries(snapshot.val().unallocatedExpenses).map((expense) => {
-                    unallocatedExpenses.push(expense);
-                })
-                console.log("unallocatedExpenses: ", unallocatedExpenses);
-                this.setState({
-                    unallocatedExpenses: unallocatedExpenses
-                })
+                if(snapshot.val().unallocatedExpenses !== undefined) {
+                    Object.entries(snapshot.val().unallocatedExpenses).map((expense) => {
+                        unallocatedExpenses.push(expense);
+                    })
+                    this.setState({
+                        unallocatedExpenses: unallocatedExpenses
+                    })
+                }
                 this.setState({loading: false})//after loading is complete, set loading to false so that the loading spinner will disappear
+                //push toast notification to let user know that the data has been loaded
+
             }, 0);
         }, 0);
 
     }
 
-    /**
-     * Function that is called when a user edits the name of a budget category.0
-     * @param newName the new name of the category
-     * @param address the address of the category in the RT database
-     */
-    handleOnNameChange(newName, category, id)
-    {   console.log("id: " + id);
-        setTimeout(() => { //set timeout so that the state is updated before the update is sent to the database
-            console.log("category: " + category, "id: " + id);
-            update(ref(database, `users/testUser/${this.state.monthView}/budgetCategories/${category}/items/${id}`), {name: newName,})  //update the name of the category in the database
-                .catch((error) => {
-                    console.error("Error updating name in ", `users/testUser/${this.state.monthView}/budgetCategories/${category}/items/${id}`, error);
-                }).then(() => {
-                console.log("Updated name in RTDB at", `users/testUser/${this.state.monthView}/budgetCategories/${category}/items/${id}`)
 
-                //update the name of item with id in category with name category in categories
-                this.setState({
-                    /*[this.state.monthView]: {
-                        ...this.state[this.state.monthView],
-                        categories: this.state[this.state.monthView].categories.map((cat) => {
-                            //console.log(cat, category);
-                            if (cat.id === category) {
-                                console.log("found category to update", cat.name)
-                                return {
-                                    ...cat,
-                                    items: Object.entries(cat.items).map((item) => {
-                                        if (item[1].id === id) {
-                                            console.log("found item to update", item[1].name, "to", newName)
-                                            return {
-                                                ...item[1],
-                                                name: newName,
-                                            }
-                                        } else return item[1];
-                                    })
-                                }
-                            } else return cat;
-                        })}*/
-                        // [`${this.state.monthView}/categories/${category}/items/${id}/name`]: newName,
-                    }, () => {
-                        console.log(this.state)
-                    }
-                )
+    modifyBudgetCategoryName(id,name){
+        //update the name in the labels array
+        let index = this.state[this.state.monthView].idList.indexOf(id);
+        this.setState({
+            [this.state.monthView]: {
+                ...this.state[this.state.monthView],
+                labels: this.state[this.state.monthView].labels.map((value, i) => {
+                    if (i === index)
+                        return name;
+                    else
+                        return value;
+                })
+            },
 
-                console.log("state: ", this.state);
-                });
-        }, 0);
+        })
     }
 
-    /**
-     * Function that is called when a user edits the amount of a budget category.
-     * @param newAmount the new amount allocated for the category
-     * @param newTotal the new total amount allocated for all categories
-     * @param cat the id of the category that is being updated
-     * @param item the id of the item that is being updated
-     */
-    handleOnAmountChange(newAmount, newTotal, cat, item) {
-        setTimeout(() => { //set timeout so that the state is updated before the update is sent to the database
-            console.log(cat, item)
-            const updates = {}; //stores the updates to be sent to the database
-            updates[`users/${'testUser'}/${this.state.monthView}/budgetCategories/${cat}/amount`] = newTotal;
-            updates[`users/${'testUser'}/${this.state.monthView}/budgetCategories/${cat}/items/${item}/amount`] = newAmount;
-            //update chart
-            let index = this.state[this.state.monthView].categories.findIndex((category) => category.id === cat);
+    modifyBudgetCategoryAmount(id,amount){
+        //update the amount in the series array
+        let index = this.state[this.state.monthView].idList.indexOf(id);
+        this.setState({
+            [this.state.monthView]: {
+                ...this.state[this.state.monthView],
+                series: this.state[this.state.monthView].series.map((value, i) => {
+                    if (i === index)
+                        return amount;
+                    else
+                        return value;
+                })
+            },
 
-            console.log(index);
+        })
+    }
+
+    modifyBudgetCategoryColor(id,color){
+        //update the color in the colors array
+        let index = this.state[this.state.monthView].idList.indexOf(id);
+        this.setState({
+            [this.state.monthView]: {
+                ...this.state[this.state.monthView],
+                colors: this.state[this.state.monthView].colors.map((value, i) => {
+                    if (i === index)
+                        return color;
+                    else
+                        return value;
+                })
+            },
+
+        })
+    }
+
+    removeBudgetCategory(id){
+        //update in firebase
+        console.log("removing budget category with id: " + id);
+        if(id === undefined || id === null || id === "") {
+        console.log("unable to remove budget category with id: " + id);
+        return;
+        }
+        update(ref(database),{["users/testUser/" + this.state.monthView + "/budgetCategories/" + id]: null}).then(()=> {
+            console.log("SUCCESS: removed budget category from RTDB at users/testUser/" + this.state.monthView + "/budgetCategories/" + id);
+            let index = this.state[this.state.monthView].idList.indexOf(id) ;
+            console.log("current state of idList: " + this.state[this.state.monthView].idList);
             this.setState({
                 [this.state.monthView]: {
                     ...this.state[this.state.monthView],
-                    series: this.state[this.state.monthView].series.map((value, i) => {
-                        if (i === index)
-                        {
-                            console.log("found index to update", value, "to", newTotal)
-                            return newTotal;}
-                        else return value;
-                    })
+                    series: this.state[this.state.monthView].series.filter((value, i) => i !== index),
+                    labels: this.state[this.state.monthView].labels.filter((value, i) => i !== index),
+                    colors: this.state[this.state.monthView].colors.filter((value, i) => i !== index),
+                    idList: this.state[this.state.monthView].idList.filter((value) => value !== id)
                 }
+            },
+                () => {
+                console.log("updated state of idList: " + this.state[this.state.monthView].idList);
             })
-            update(ref(database), updates)
-                .catch((error) => {
-                    console.error("Error updating amount", error.message);
-                });
-            this.setState({lastSaved: "Amount"}) //set the last saved state to amount so that the last saved message will display the amount
-        }, 0);
-    };
+
+        }).catch(
+            (error) => {
+                console.log("ERROR: could not remove budget category from RTDB at users/testUser/" + this.state.monthView + "/budgetCategories/" + id);
+                console.log(error);
+            }
+        )
+
+
+
+        //remove the category from the labels array
+
+
+    }
+
+
+    addBudgetCategory(){
+        //add the category to the labels array
+        let newId = "newItem"+ (parseInt(this.state[this.state.monthView].idList.length)+1);
+
+        //update in firebase
+        update(ref(database),{["users/testUser/" + this.state.monthView + "/budgetCategories/" + newId]:
+                {name: "Unnamed Category", amount: 0, color: "#000000", id: newId}})
+            .then(()=> {
+                this.setState({
+
+                    [this.state.monthView]: {
+                        ...this.state[this.state.monthView],
+                        labels: [...this.state[this.state.monthView].labels, "Unnamed Category"],
+                        series: [...this.state[this.state.monthView].series, 0],
+                        colors: [...this.state[this.state.monthView].colors, "#000000"],
+                        idList: [...this.state[this.state.monthView].idList, newId]
+                    },
+                })
+                console.log("SUCCESS: added budget category to RTDB at users/testUser/" + this.state.monthView + "/budgetCategories/" + newId);
+        })
+            .catch(
+            (error) => {
+                console.log("ERROR: could not add budget category to RTDB at users/testUser/" + this.state.monthView + "/budgetCategories/" + newId);
+                console.log(error);
+            }
+        )
+
+
+
+    }
 
     /**
      * Function that is called when a user edits the amount of a budget category.
@@ -383,8 +405,6 @@ class BudgetClass extends React.Component {
         setTimeout(() => {
             const updates = {}; //stores the updates to be sent to the database
             if (type === "oneTime") updates[`users/${'man1'}/incomeCategories/${item}/amount`] = newAmount; else if (type === "category") {
-                updates[`users/${'man1'}/incomeCategories/${cat}/amount`] = newTotal; //update the total amount allocated for the income category
-                updates[`users/${'man1'}/incomeCategories/${cat}/items/${item}/amount`] = newAmount;
             }
             update(ref(database), updates) //update the amount of the category in the database
                 .catch((error) => {
@@ -393,8 +413,31 @@ class BudgetClass extends React.Component {
         }, 0);
     }
 
-    handleExpenseAllocationChange(change){
-        this.setState({unallocatedExpenses: change});
+    toObject(arr) {
+        let rv = {};
+        for (let i = 0; i < arr.length; ++i){
+            console.log(arr[i][1]);
+            rv[arr[i][1].id] = arr[i][1];
+        }
+        return rv;
+    }
+
+
+    async handleExpenseAllocationChange(change){
+        //updates the unallocated expenses in firebase so that data is persistent
+        console.log(change);
+        await set(ref(database, `users/testUser/unallocatedExpenses`), this.toObject(change))
+            .then(()=> {
+                    console.log("SUCCESS: updated unallocated expenses in RTDB at", `users/testUser/unallocatedExpenses`);
+                    this.setState({lastSaved: "Expense Allocation", unallocatedExpenses: change})
+            }
+            )
+            .catch((error) => {
+                    console.error("Error updating unallocatedExpenses", error);
+                    //push toasts here
+                    this.props.toaster.push(this.errorMessageNotification());
+                }
+            );
     }
 
     /**
@@ -411,8 +454,26 @@ class BudgetClass extends React.Component {
             this.setState({monthView: this.state.tempMonthView, draftMode: false});
     }
 
+    //add items to unallocated expensee list
+    addToUnallocatedExpenses(toAdd){
+        //toAdd is an array of objects
+        let newUnallocatedExpenses = this.state.unallocatedExpenses;
+        console.log("current unallocated expenses: ", newUnallocatedExpenses);
+        for (let i = 0; i < toAdd.length; i++){
+            //add item if it does not already exist
+            if(!newUnallocatedExpenses.some((item) => item[1].id === toAdd[i].id)){
+                newUnallocatedExpenses.push([toAdd[i].id, toAdd[i]]);
+                console.log("added ", toAdd[i].id, " to unallocated expenses");
+            }
+            else console.log("item already exists in unallocated expenses");
+
+        }
+        console.log("new unallocated expenses: ", newUnallocatedExpenses);
+        //this.setState({unallocatedExpenses: newUnallocatedExpenses});
+    }
+
     modifyStateForMonthView(month, year) {
-        console.log("Month received: ", month, "Year received: ", year, "Current month: ", new Date().getMonth()+1, "Current year: ", new Date().getFullYear());
+        //console.log("Month received: ", month, "Year received: ", year, "Current month: ", new Date().getMonth()+1, "Current year: ", new Date().getFullYear());
         //if the month is the current month, set the state to the current month
 
         if (year === new Date().getFullYear() && month === new Date().getMonth()+1) {
@@ -426,7 +487,7 @@ class BudgetClass extends React.Component {
         }
         else if ((year === new Date().getFullYear() && month === new Date().getMonth() ) || (year === new Date().getFullYear() - 1 && month === 12 && new Date().getMonth() === 0)) {
             //if the month is the previous month, set the state to the previous month
-            console.log("setting state to past month")
+//            console.log("setting state to past month")
             this.setState({monthView: "previous", validMonth: true, monthSelected: {month: month, year: year}});
         } else { //if the month is not the current, next, or previous month, set the state to the other month
             /*getMonthlyBudgetFromFireStore(month, year).then((snapshot) => {
@@ -438,9 +499,9 @@ class BudgetClass extends React.Component {
             console.log ("Invalid month selected");
             this.setState({validMonth: false,  monthSelected: {month: month, year: year}});
         }
-
-
     }
+
+    //make component unmount when called
 
     render() {
         let options={
@@ -463,18 +524,11 @@ class BudgetClass extends React.Component {
 
         let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-        /*const ohNoGifs = [
-            <img src={"https://i.giphy.com/media/j4l0mCdcTFRyY4Bc5s/giphy.webp"} height={250} alt={"gif"}/>,
-            <img src={"https://i.giphy.com/media/hEwnTrYovTP5GHAeZp/giphy.webp"} height={250} alt={"gif"}/>,
-            <img src={"https://i.giphy.com/media/kfS15Gnvf9UhkwafJn/giphy.webp"} height={250} alt={"gif"}/>,
-            <img src={"https://i.giphy.com/media/j4l0mCdcTFRyY4Bc5s/giphy.webp"} height={250} alt={"gif"}/>,
-            <img src={"https://i.giphy.com/media/XHdW0gCDj6KiFmKFCZ/giphy.webp"} height={250} alt={"gif"}/>,
-            <img src={"https://i.giphy.com/media/XEyXIfu7IRQivZl1Mw/giphy.webp"} height={250} alt={"gif"}/>,
-    ];*/
         return (<div>
             {(this.state.loading) ? <div style={{position: "fixed", top: "calc(50% - 50px)", left: "50%"}}>
                     <ScaleLoader width={15} height={50} color={"#fff"} loading={this.state.loading}/></div> :
                 <div className={"box8"}>
+
                     <div className="budgetNavPanel">
                         {(!this.state.validMonth && !this.state.draftMode) ?  <div className={"budgetNavInvalidMonthNotice"}>
                             <h5>Fun Fact</h5>
@@ -491,24 +545,27 @@ class BudgetClass extends React.Component {
                                  activeKey={"Debt"} onSelect={value => {
                                 console.log(value)
                             }}>
-                                {this.state[this.state.monthView].categories.map(cat => {
-                                    return <ScrollTo selector={`#${cat.id}`}
-                                                     scrollOptions={{behavior: "smooth", block: "center"}}
-                                                     style={{cursor: "pointer", marginBottom: 4}}>
-                                        <Button appearance={"ghost"} size={"sm"}
-                                                style={{
-                                                    borderColor: cat.color, color: "#a3a8b2", background: "#1a1d24"
-                                                }}>
-                                            <Badge color="red"
-                                                   style={{background: cat.color}}></Badge> {cat.name}
-                                        </Button>
-                                    </ScrollTo>
-                                })}
+                            {this.state[this.state.monthView].idList.map((label, index) => {
+                                //console.log("label: ", label, "index: ", index);
+                                return <ScrollTo selector={`#${label}`}
+                                                 scrollOptions={{behavior: "smooth", block: "center"}}
+                                                 style={{cursor: "pointer", marginBottom: 4}}>
+                                    <Button appearance={"ghost"} size={"sm"}
+                                            style={{
+                                                borderColor: this.state[this.state.monthView].colors[index], color: "#a3a8b2", background: "#1a1d24"
+                                            }}>
+                                        <Badge color="red"
+                                               style={{background: this.state[this.state.monthView].colors[index]}}></Badge> {this.state[this.state.monthView].labels[index]}
+                                    </Button>
+                                </ScrollTo>
+                            })}
                             </Nav>
                         </center>
                         </div>}
 
-                        <BudgetActionMenu validMonth={this.state.validMonth} toggleDraftMode={(bool)=>this.toggleDraftMode(bool)}/>
+                        <BudgetActionMenu validMonth={this.state.validMonth} toggle DraftMode={(bool)=>this.toggleDraftMode(bool)}
+                                          addToUnallocatedExpenses={(add) => this.addToUnallocatedExpenses(add)}
+                        />
 
                         <p style={{textAlign: "center", marginTop: 30, color: "#9b9b9b"}}>Last
                             Saved: {this.state.lastSaved}</p>
@@ -529,7 +586,7 @@ class BudgetClass extends React.Component {
                         <center>
                             <Nav appearance="subtle" reversed activeKey={this.state.currentView} justified
                                  className={"budgetScrollableNav"}
-                            style={{position: "fixed", top: 55}}
+                            style={{position: "fixed", top: 55, zIndex: 5}}
                             >
                                 <Nav.Item eventKey={"Budget"} icon={<GiAbstract002/>} onSelect={() => {
                                     (this.state.currentView !== "Budget") ? this.setState({currentView: "Budget"}) : console.log("Already Selected")
@@ -558,7 +615,21 @@ class BudgetClass extends React.Component {
                             </center>: null}
                             {(this.state.currentView === "Income" || this.state.currentView === "Both") ?
                                 <div key="One Time Income"  style={(this.state.currentView === "Income") ? {marginTop: 10} : null}>
-                                    <IncomeCategory incomeState={this.state.income} handleAmountChange={this.handleOnIncomeAmountChange.bind()}></IncomeCategory>
+
+
+                                    {(this.state.monthView === "current")? <IncomeCategoryNG
+                                        address={`users/testUser/current/incomeCategories/`}
+                                    />: null}
+                                    {(this.state.monthView === "next")? <IncomeCategoryNG
+                                        address={`users/testUser/next/incomeCategories/`}
+                                    />: null}
+                                    {(this.state.monthView === "previous")? <IncomeCategoryNG
+                                        address={`users/testUser/previous/incomeCategories/`}
+                                    />: null}
+                                    {(this.state.monthView === "draft")? <IncomeCategoryNG
+                                        address={`users/testUser/draft/oneTimeIncome/`}
+                                    />: null}
+
                                 </div>
                                 : null}
                             {(this.state.currentView === "Both") ? <center>
@@ -570,39 +641,79 @@ class BudgetClass extends React.Component {
                             </center>: null}
                             {(this.state.currentView === "Budget" || this.state.currentView === "Both") ? <div>
                                 {(this.state.monthView === "previous")?
-                                    this.state.previous.categories.map(cat => {
-                                        console.log(this.state.unallocatedExpenses, " <=")
-                                        return  <div id={cat.id}>
-                                                    <BudgetCategory
-                                                    category={cat}
-                                                    unallocatedExpenses={this.state.unallocatedExpenses}
-                                                    updateUnallocatedExpenses={(changes)=>this.handleExpenseAllocationChange(changes)}
-                                                    handleOnNameChange={async (name, category, id) => this.handleOnNameChange(name, category, id)}
-                                                    handleOnAmountChange={(newAmount, newTotal, cat, item) => this.handleOnAmountChange(newAmount, newTotal, cat, item)}/>
-                                                    draftMode={this.state.draftMode}
+                                    this.state.previous.idList.map((catID)=>{
+                                        console.log("catID: " + catID)
+                                        return  <div  id={catID}>
+
+                                            <BudgetCategoryNG key={`${catID}div`}
+                                                address={`users/testUser/previous/budgetCategories/${catID}`}
+                                                unallocatedExpenses={this.state.unallocatedExpenses}
+                                                modifyBudgetCategoryName={async (id,name) => this.modifyBudgetCategoryName(id,name)}
+                                                modifyBudgetCategoryAmount={async (id, amount) => this.modifyBudgetCategoryAmount(id, amount)}
+                                                updateUnallocatedExpenses={async (change)=> this.handleExpenseAllocationChange(change)}
+                                                removeBudgetCategory={async () => this.removeBudgetCategory(catID)}
+                                                modifyBudgetCategoryColor={async (id, color) => this.modifyBudgetCategoryColor(id, color)}
+                                            />
+
                                         </div>
                                     }) : null}
+
                                 {(this.state.monthView === "current")?
-                                    this.state.current.categories.map(cat => {
-                                        return <div id={cat.id}><BudgetCategory category={cat}
-                                                                                unallocatedExpenses={this.state.unallocatedExpenses}
-                                                                                updateUnallocatedExpenses={(changes)=>this.handleExpenseAllocationChange(changes)}
-                                                                                handleOnNameChange={async (name, category, id) => this.handleOnNameChange(name, category,id)}
-                                                                                handleOnAmountChange={(newAmount, newTotal, cat, item) => this.handleOnAmountChange(newAmount, newTotal, cat, item)}/></div>
+                                    this.state.current.idList.map((catID)=>{
+                                        console.log(catID)
+                                        return  <div id={catID}>
+                                            <BudgetCategoryNG key={`${catID}div`}
+                                                toaster={this.props.toaster}
+                                                address={`users/testUser/current/budgetCategories/${catID}`}
+                                                unallocatedExpenses={this.state.unallocatedExpenses}
+                                                modifyBudgetCategoryName={async (id,name) => this.modifyBudgetCategoryName(id,name)}
+                                                modifyBudgetCategoryAmount={async (id, amount) => this.modifyBudgetCategoryAmount(id, amount)}
+                                                updateUnallocatedExpenses={async (change)=> this.handleExpenseAllocationChange(change)}
+                                                removeBudgetCategory={async () => this.removeBudgetCategory(catID)}
+                                                              modifyBudgetCategoryColor={async (id, color) => this.modifyBudgetCategoryColor(id, color)}
+
+                                            />
+                                        </div>
                                     }) : null}
+
                                 {(this.state.monthView === "next")?
-                                    this.state.next.categories.map(cat => {
-                                        return <div id={cat.id}><BudgetCategory category={cat}
-                                                                                unallocatedExpenses={this.state.unallocatedExpenses}
-                                                                                updateUnallocatedExpenses={(changes)=>this.handleExpenseAllocationChange(changes)}
-                                                                                handleOnNameChange={async (name, category, id) => this.handleOnNameChange(name, category, id)}
-                                                                                handleOnAmountChange={(newAmount, newTotal, cat, item) => this.handleOnAmountChange(newAmount, newTotal, cat, item)}/></div>
-                                    }) : null}
+                                    this.state.next.idList.map((catID)=>{
+                                        console.log(catID)
+                                        return  <div id={catID}>
+                                            <BudgetCategoryNG
+                                                key={`${catID}div`}
+                                                toaster={this.props.toaster}
+                                                address={`users/testUser/next/budgetCategories/${catID}`}
+                                                unallocatedExpenses={this.state.unallocatedExpenses}
+                                                modifyBudgetCategoryName={async (id,name) => this.modifyBudgetCategoryName(id,name)}
+                                                modifyBudgetCategoryAmount={async (id, amount) => this.modifyBudgetCategoryAmount(id, amount)}
+                                                updateUnallocatedExpenses={async (change)=> this.handleExpenseAllocationChange(change)}
+                                                removeBudgetCategory={async () => this.removeBudgetCategory(catID)}
+                                                modifyBudgetCategoryColor={async (id, color) => this.modifyBudgetCategoryColor(id, color)}
+
+                                            />
+
+
+                                        </div>}) : null}
+
+
                                 {(this.state.monthView === "draft")?
-                                    this.state.draft.categories.map(cat => {
-                                        return <div id={cat.id}><BudgetCategory draftMode={true} category={cat}
-                                                                                unallocatedExpenses={this.state.unallocatedExpenses} handleOnNameChange={async (name,  category, id) => this.handleOnNameChange(name, category , id)}  handleOnAmountChange={(newAmount, newTotal, cat, item) => this.handleOnAmountChange(newAmount, newTotal, cat, item)}/></div>
-                                    }) : null}
+                                    this.state.draft.idList.map((catID)=>{
+                                        console.log(catID)
+                                        return  <div id={catID}>
+                                            <BudgetCategoryNG
+                                                key={`${catID}div`}
+                                                toaster={this.props.toaster}
+                                                address={`users/testUser/draft/budgetCategories/${catID}`}
+                                                unallocatedExpenses={this.state.unallocatedExpenses}
+                                                modifyBudgetCategoryName={async (id,name) => this.modifyBudgetCategoryName(id,name)}
+                                                modifyBudgetCategoryAmount={async (id, amount) => this.modifyBudgetCategoryAmount(id, amount)}
+                                                updateUnallocatedExpenses={(change)=> this.handleExpenseAllocationChange(change)}
+                                                removeBudgetCategory={async () => this.removeBudgetCategory(catID)}
+                                                modifyBudgetCategoryColor={async (id, color) => this.modifyBudgetCategoryColor(id, color)}
+                                            />
+
+                                        </div>}) : null}
 
 
 
@@ -617,26 +728,32 @@ class BudgetClass extends React.Component {
                                     padding: 10
                                 }}
 
-                                           startIcon={<AiOutlinePlus/>} size={"large"}>
+                                           startIcon={<AiOutlinePlus/>} size={"large"} onClick={async () => this.addBudgetCategory()}>
                                     Add new category
-                                </ButtonMUI></center>
+                                </ButtonMUI>
+
+                            </center>
                         </div></div>}
 
                     </div>
 
-                    <div className={"budgetNavigationInfoPanel"}>
-                        <center>
+                    <div className={"budgetNavigationInfoPanel"} style={{textAlign: "center"}}>
+
                             <div className={"budgetDateSelector"}>
                                 {(this.state.draftMode)? <h2 style={{color: "#e8eaef"}}>Draft Mode</h2> :<DatePickerTC
                                     modifyStateForMonthView={(month, year) => this.modifyStateForMonthView(month, year)}></DatePickerTC> }
 
                             </div>
-                            {(!this.state.validMonth && !this.state.draftMode)? <div className={"budgetInfoInvalidMonthNotice"}>
+
+                            {(!this.state.validMonth && !this.state.draftMode)? <div className={"budgetInfoInvalidMonthNotice"} style={{justifyContent: "center"}}>
                                 <h5>You may only select a budget for the previous, present, or upcoming month unless you have made budget for a previous month before.</h5>
                                 <hr/>
                                 <h7>Note: Previous budgets that are older than 1 month will become read only. Check below for a list of budgets that are available</h7>
                             </div> : <div>
-                            <div className={"budgetNavigationInfoPanelMain"}>
+
+                            <div className={"budgetNavigationInfoPanelMain"}  style={{textAlign: "center", overflowX: "hidden"}}>
+                                <center>
+
                                 <div style={{height: 285}}>
                                     <div style={{width: 350, marginLeft: 0}}>
 
@@ -644,8 +761,10 @@ class BudgetClass extends React.Component {
                                             options={options}
                                             series={this.state[this.state.monthView].series} type="donut"
                                         />
+
                                     </div>
                                 </div>
+                            </center>
                                 <div>
                                     <FlexboxGrid align="top" justify={"center"}>
                                         <FlexboxGrid.Item colspan={7}>
@@ -664,7 +783,7 @@ class BudgetClass extends React.Component {
                                                     background: "#1a1a1a", width: "auto"
                                                 }}>
                                                     <h4>
-                                                        <b>{formatter.format(this.state[this.state.monthView].income.totalAmountAllocated)}</b>
+                                                        <b>{formatter.format(2323)}</b>
                                                     </h4>
                                                 </div>
                                             </div>
@@ -716,8 +835,8 @@ class BudgetClass extends React.Component {
                                                 <div style={{
                                                     background: "rgb(26,26,26)", width: "auto",
                                                 }}>
-                                                    <h4 style={(this.state[this.state.monthView].income.totalAmountAllocated - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0) >= 0) ? {color: "rgb(28,157,2)"} : {color: "rgb(169,0,0)"}}>
-                                                        <b>{formatter.format(this.state[this.state.monthView].income.totalAmountAllocated - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0))}</b>
+                                                    <h4 style={(2323 - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0) >= 0) ? {color: "rgb(28,157,2)"} : {color: "rgb(169,0,0)"}}>
+                                                        <b>{formatter.format(2323 - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0))}</b>
                                                     </h4>
                                                 </div>
                                             </div>
@@ -725,28 +844,43 @@ class BudgetClass extends React.Component {
                                     </FlexboxGrid>
                                 </div>
                                 <div>
-                                    <Table
-                                        height={400}
-                                        data={this.state[this.state.monthView].categories}
-                                        onRowClick={rowData => {
-                                            console.log(rowData);
-                                        }}
-                                    >
-                                        <Table.Column width={350}>
-                                            <Table.HeaderCell>Category Name</Table.HeaderCell>
-                                            <Table.Cell dataKey="name"/>
-                                        </Table.Column>
-                                        <Table.Column width={120} fixed="right">
-                                            <Table.HeaderCell>Amount Allocated</Table.HeaderCell>
-                                            <Table.Cell dataKey="amount"/>
-                                        </Table.Column>
-                                    </Table>
+                                    {this.state[this.state.monthView].labels.map((category, index) => {
+                                        return  <Grid>
+                                                <Row >
+                                                    <Col xs={9} md={9}>
+                                                        <div style={{
+                                                            marginTop: 5,
+                                                            borderTopRightRadius: 15,
+                                                            borderBottomRightRadius: 15,
+                                                            textAlign: "center"
+                                                        }}>
+                                                            <h6>{category}</h6>
+                                                        </div>
+                                                    </Col>
+                                                    <Col xs={9} md={3}>
+                                                        <div style={{
+                                                            marginTop: 5,
+                                                            borderTopLeftRadius: 15,
+                                                            borderBottomLeftRadius: 15,
+                                                            textAlign: "center" ,
+                                                            color: "#f00"
+                                                        }}>
+                                                            <h6>{formatter.format(this.state[this.state.monthView].series[index])}</h6>
+                                                        </div>
+                                                    </Col>
+
+                                                </Row>
+
+                                            </Grid>
+                                    })}
+
+
                                 </div>
+                                <BudgetCategoryRender
+                                    selectedCategory={this.state.selectedCategory}></BudgetCategoryRender>
+
                             </div>
-                            <BudgetCategoryRender
-                                selectedCategory={this.state.selectedCategory}></BudgetCategoryRender>
                         </div>}
-                        </center>
                     </div>
                     }
                 </div>}
