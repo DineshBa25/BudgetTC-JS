@@ -1,19 +1,21 @@
 import React from 'react';
-import {Button, Modal, Radio, Stack} from "rsuite";
-import {Button as ButtonMUI} from "@mui/material";
+import {Button, Modal, Stack} from "rsuite";
 import ImportIcon from "@rsuite/icons/Import";
 import DraftRound from "@rsuite/icons/DraftRound";
 import {RestorePage} from "@mui/icons-material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import './Budget.css';
+import BudgetImportExpensesModal from "./BudgetImportExpensesModal";
+
 
 /**Renders the buttons and controls/triggers the actions for the main budget page in the action menu.*/
 class BudgetActionMenu extends React.Component{
-    constructor(props) {
+    constructor() {
         super();
         this.state = {
             showConfirmationScreen: false,
             inDraftMode: false,
+            showImportExpensesModal: false,
         }
     }
 
@@ -25,9 +27,18 @@ class BudgetActionMenu extends React.Component{
         this.setState({showConfirmationScreen: true});
     }
 
+    handleShowImportExpenseModal = () => {
+        this.setState({showImportExpensesModal: true})
+    }
+
+    handleCloseImportExpenseModal = () =>{
+        this.setState({showImportExpensesModal: false})
+    }
+
     //TODO: Add list of things that draft mode is useful for.
     render() {
         return (<div>
+            {(this.state.showImportExpensesModal)? <BudgetImportExpensesModal show handleClose={this.handleCloseImportExpenseModal} addToUnallocatedExpenses={(add)=>this.props.addToUnallocatedExpenses(add)}/>: null}
             <Modal backdrop={"static"} keyboard={false} open={this.state.showConfirmationScreen} size="sm" onClose={this.handleClose}>
                 <Modal.Body>
                     <h4>Are you sure that you want to enter Draft mode?</h4>
@@ -52,7 +63,7 @@ class BudgetActionMenu extends React.Component{
             <div className={"budgetNavActionItems"}>
                 {(this.props.validMonth && !this.state.inDraftMode)?
                     <Stack direction={"column"} spacing={10}>
-                        <Button >
+                        <Button onClick={this.handleShowImportExpenseModal}>
                             <ImportIcon/> Import Expenses
                         </Button>
 
