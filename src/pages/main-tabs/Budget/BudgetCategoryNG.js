@@ -15,7 +15,8 @@ class BudgetCategoryNG extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            amount: 0,
+            //sum of ammounts of all sub categories
+            amount : 0,
             items: [],
             color: "",
             name: "",
@@ -23,6 +24,7 @@ class BudgetCategoryNG extends React.Component {
             loading: true,
             showNameInput: false,
             deleted: false,
+            draftMode: props.draft,
         }
 
     }
@@ -34,16 +36,18 @@ class BudgetCategoryNG extends React.Component {
         get(child(ref(database), this.props.address)).then((snapshot) => {
             if (snapshot.exists()) {
                 let items = [];
+                let amount = 0;
                 //items is an object of objects
                 if(snapshot.val().items){
                     Object.entries(snapshot.val().items).forEach(([, value]) => {
                         items.push(value);
+                        amount += parseFloat(value.amount);
                     });
                 }
 
 
                 this.setState({
-                    amount: snapshot.val().amount,
+                    amount: amount,
                     items: items,
                     color: snapshot.val().color,
                     name: snapshot.val().name,
@@ -189,16 +193,43 @@ class BudgetCategoryNG extends React.Component {
         });
     }
 
-    handleRemoveBudgetItem(id) {
+    async handleRemoveBudgetItem(id) {
         //remove the budget item with the given id from the items array
         let items = this.state.items;
+        //print the items array before removing the item
+        console.log("Before removing items:");
+        for (let i = 0; i < items.length; i++) {
+            console.log(items[i]);
+        }
+        console.log("Attempting to remove item with id: " + id);
         let index = items.findIndex((item) => item.id === id);
-        items.splice(index, 1);
-        //update in firebase
+        console.log("Index of item to remove: " + index);
+        console.log("Item to remove: ", items[index]);
+        //remove the item from the items array that has the given id
+
+        let temp = [];
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].id !== id) {
+                temp.push(items[i]);
+            }
+        }
+
+
+        //print the items array after removing the item
+        console.log("After removing items:");
+        for (let i = 0; i < temp.length; i++) {
+            console.log(temp[i]);
+        }
+
+
+
         remove(ref(database, this.props.address + "/items/" + id)).then(() => {
             //update state
             console.log("SUCCESS: removed budget item from RTDB at " + this.props.address + "/items/item" + id);
-            this.setState({items: items});
+            this.setState({items: temp}, () => {
+                //update the unallocated expenses in the parent
+                 console.log("items: ", this.state.items);
+            });
         }).catch((error) => {
             console.error(error);
         });
@@ -238,11 +269,14 @@ class BudgetCategoryNG extends React.Component {
 
                 </div>
                 <div className={"budget-category-item-panel"}>
+
                     {(this.state.items.length !== 0) ?
                         this.state.items.map((item) => {
                             //todo: fix changeState() function in budgetClass
+                          console.log(item.id)
                         return <BudgetCategoryItem
-                            draftMode={false}
+                            key={item.id}
+                            draftMode={this.state.draftMode}
                             item={item} category={this.state.id}
                             unallocatedExpenses={this.props.unallocatedExpenses}
                             categoryTotal={this.state.amount} changeTotal={(newTotal)=>this.changeState(newTotal)}
