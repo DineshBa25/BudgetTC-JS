@@ -53,8 +53,8 @@ const Login = () => {
         password: ''
     });//form error state
     const [formValue, setFormValue] = React.useState({//initial form value
-        email: 'dineshba63@gmail.com',
-        password: '1234567'
+        email: '',
+        password: ''
     });
     const [visible, setVisible] = React.useState(false);//for password visibility toggle
 
@@ -124,7 +124,7 @@ const Login = () => {
                 localStorage.setItem("Authenticated", true); // set local storage for auth state to true
                 dispatch(toggleAuth(true)) // set auth state in redux store to true
                 toaster.clear(); // clear any previous messages
-                navigate("/app/dashboard")  // navigate to dashboard page
+                navigate("/app/budget")  // navigate to dashboard page
                 setLoading(false);//set loading state to false
             })
             .catch((error) => {
@@ -185,7 +185,7 @@ const Login = () => {
                 >
                     <Form.Group controlId="email">
                         <Form.ControlLabel>Email</Form.ControlLabel>
-                        <Form.Control name="email" onKeyPress={pressed}/>
+                        <Form.Control name="email" placeholder={"email"} onKeyPress={pressed}/>
                     </Form.Group>
                     <TextField name="password" label="Password" type={visible ? 'text' : 'password'} help={
                         <Checkbox style={{translate: "30"}} onChange={(value, checked) => {
