@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Badge, Button, FlexboxGrid, Message, Nav, Notification, Grid, Row, Col
+    Badge, Button, FlexboxGrid, Message, Nav, Notification, Grid, Row, Col, Divider
 } from "rsuite";
 import {database} from "../../../configs/firebaseConfig";
 import {ref, update, get, child, set} from "firebase/database";
@@ -17,6 +17,7 @@ import ScrollTo from "react-scroll-into-view";
 import BudgetCategoryNG from "./BudgetCategoryNG";
 import IncomeCategoryNG from "./IncomeCategoryNG";
 import {Button as ButtonMUI} from "@mui/material";
+import {auth} from "../../../configs/firebaseConfig";
 
 class BudgetClass extends React.Component {
     constructor(props) {
@@ -83,7 +84,7 @@ class BudgetClass extends React.Component {
     componentDidMount() {
         setTimeout(() => {
             //get budget categories from firebase so that each category can be updated when with is updated in the realtime database
-            get(child(ref(database), "users/testUser")).then((snapshot) => {
+            get(child(ref(database), `users/${auth.currentUser.uid}`)).then((snapshot) => {
 //stores the mapping of budget categories to their names
                 let chartValues;
 //stores all the amounts allocated for each category so that the overview donut chart can display it
@@ -99,7 +100,7 @@ class BudgetClass extends React.Component {
                 let idList;
 
                 let amount;
-//for users/testUser/current update state
+//for users/${auth.currentUser.uid}/current update state
                 if (snapshot.exists()) {
                     chartValues = [];
                     chartNames = [];
@@ -148,7 +149,7 @@ class BudgetClass extends React.Component {
 
                     idList = [];
 
-                    //for users/testUser/next update state
+                    //for users/${auth.currentUser.uid}/next update state
                     Object.entries(snapshot.val().next["budgetCategories"]).forEach((category) => {
                         idList.push(category[0]);
                         amount = 0;
@@ -187,7 +188,7 @@ class BudgetClass extends React.Component {
                 oneTimeIncome = [];
                 idList =[];
 
-//for users/testUser/previous update state
+//for users/${auth.currentUser.uid}/previous update state
 
                 Object.entries(snapshot.val().previous["budgetCategories"]).forEach((category) => {
                     amount = 0;
@@ -224,7 +225,7 @@ class BudgetClass extends React.Component {
                 incomeCats = [];
                 oneTimeIncome = [];
                 idList = [];
-                //for users/testUser/draft update state
+                //for users/${auth.currentUser.uid}/draft update state
                 Object.entries(snapshot.val().draft["budgetCategories"]).forEach((category) => {
                     idList.push(category[0]);
                     amount = 0;
@@ -240,6 +241,7 @@ class BudgetClass extends React.Component {
                 Object.entries(snapshot.val().draft["incomeCategories"]).forEach((category) => {
                     if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
                 })
+
 
                 this.setState({
                     draft: {
@@ -271,6 +273,16 @@ class BudgetClass extends React.Component {
 
     }
 
+    getTotalIncome = () => {
+        let total = 0;
+        Object.entries(this.state[this.state.monthView].income.oneTime).forEach((income) => {
+            total += parseFloat(income[1].amount);
+        })
+        Object.entries(this.state[this.state.monthView].income.categories).forEach((income) => {
+            total += parseFloat(income[1].amount);
+        })
+        return total;
+    }
 
     modifyBudgetCategoryName(id,name){
         //update the name in the labels array
@@ -330,8 +342,8 @@ class BudgetClass extends React.Component {
         console.log("unable to remove budget category with id: " + id);
         return;
         }
-        update(ref(database),{["users/testUser/" + this.state.monthView + "/budgetCategories/" + id]: null}).then(()=> {
-            console.log("SUCCESS: removed budget category from RTDB at users/testUser/" + this.state.monthView + "/budgetCategories/" + id);
+        update(ref(database),{[`users/${auth.currentUser.uid}/` + this.state.monthView + "/budgetCategories/" + id]: null}).then(()=> {
+            console.log("SUCCESS: removed budget category from RTDB at users/${auth.currentUser.uid}/" + this.state.monthView + "/budgetCategories/" + id);
             let index = this.state[this.state.monthView].idList.indexOf(id) ;
             console.log("current state of idList: " + this.state[this.state.monthView].idList);
             this.setState({
@@ -349,7 +361,7 @@ class BudgetClass extends React.Component {
 
         }).catch(
             (error) => {
-                console.log("ERROR: could not remove budget category from RTDB at users/testUser/" + this.state.monthView + "/budgetCategories/" + id);
+                console.log("ERROR: could not remove budget category from RTDB at users/${auth.currentUser.uid}/" + this.state.monthView + "/budgetCategories/" + id);
                 console.log(error);
             }
         )
@@ -367,7 +379,7 @@ class BudgetClass extends React.Component {
         let newId = "newItem"+ (parseInt(this.state[this.state.monthView].idList.length)+1);
 
         //update in firebase
-        update(ref(database),{["users/testUser/" + this.state.monthView + "/budgetCategories/" + newId]:
+        update(ref(database),{[`users/${auth.currentUser.uid}/` + this.state.monthView + "/budgetCategories/" + newId]:
                 {name: "Unnamed Category", amount: 0, color: "#000000", id: newId}})
             .then(()=> {
                 this.setState({
@@ -380,11 +392,11 @@ class BudgetClass extends React.Component {
                         idList: [...this.state[this.state.monthView].idList, newId]
                     },
                 })
-                console.log("SUCCESS: added budget category to RTDB at users/testUser/" + this.state.monthView + "/budgetCategories/" + newId);
+                console.log("SUCCESS: added budget category to RTDB at users/${auth.currentUser.uid}/" + this.state.monthView + "/budgetCategories/" + newId);
         })
             .catch(
             (error) => {
-                console.log("ERROR: could not add budget category to RTDB at users/testUser/" + this.state.monthView + "/budgetCategories/" + newId);
+                console.log("ERROR: could not add budget category to RTDB at users/${auth.currentUser.uid}/" + this.state.monthView + "/budgetCategories/" + newId);
                 console.log(error);
             }
         )
@@ -426,9 +438,9 @@ class BudgetClass extends React.Component {
     async handleExpenseAllocationChange(change){
         //updates the unallocated expenses in firebase so that data is persistent
         console.log(change);
-        await set(ref(database, `users/testUser/unallocatedExpenses`), this.toObject(change))
+        await set(ref(database, `users/${auth.currentUser.uid}/unallocatedExpenses`), this.toObject(change))
             .then(()=> {
-                    console.log("SUCCESS: updated unallocated expenses in RTDB at", `users/testUser/unallocatedExpenses`);
+                    console.log("SUCCESS: updated unallocated expenses in RTDB at", `users/${auth.currentUser.uid}/unallocatedExpenses`);
                     this.setState({lastSaved: "Expense Allocation", unallocatedExpenses: change})
             }
             )
@@ -563,7 +575,7 @@ class BudgetClass extends React.Component {
                         </center>
                         </div>}
 
-                        <BudgetActionMenu validMonth={this.state.validMonth} toggle DraftMode={(bool)=>this.toggleDraftMode(bool)}
+                        <BudgetActionMenu validMonth={this.state.validMonth} toggleDraftMode={(bool)=>this.toggleDraftMode(bool)}
                                           addToUnallocatedExpenses={(add) => this.addToUnallocatedExpenses(add)}
                         />
 
@@ -618,16 +630,16 @@ class BudgetClass extends React.Component {
 
 
                                     {(this.state.monthView === "current")? <IncomeCategoryNG
-                                        address={`users/testUser/current/incomeCategories/`}
+                                        address={`users/${auth.currentUser.uid}/current/incomeCategories/`}
                                     />: null}
                                     {(this.state.monthView === "next")? <IncomeCategoryNG
-                                        address={`users/testUser/next/incomeCategories/`}
+                                        address={`users/${auth.currentUser.uid}/next/incomeCategories/`}
                                     />: null}
                                     {(this.state.monthView === "previous")? <IncomeCategoryNG
-                                        address={`users/testUser/previous/incomeCategories/`}
+                                        address={`users/${auth.currentUser.uid}/previous/incomeCategories/`}
                                     />: null}
                                     {(this.state.monthView === "draft")? <IncomeCategoryNG
-                                        address={`users/testUser/draft/oneTimeIncome/`}
+                                        address={`users/${auth.currentUser.uid}/draft/oneTimeIncome/`}
                                     />: null}
 
                                 </div>
@@ -646,13 +658,15 @@ class BudgetClass extends React.Component {
                                         return  <div  id={catID}>
 
                                             <BudgetCategoryNG key={`${catID}div`}
-                                                address={`users/testUser/previous/budgetCategories/${catID}`}
+                                                address={`users/${auth.currentUser.uid}/previous/budgetCategories/${catID}`}
                                                 unallocatedExpenses={this.state.unallocatedExpenses}
                                                 modifyBudgetCategoryName={async (id,name) => this.modifyBudgetCategoryName(id,name)}
                                                 modifyBudgetCategoryAmount={async (id, amount) => this.modifyBudgetCategoryAmount(id, amount)}
                                                 updateUnallocatedExpenses={async (change)=> this.handleExpenseAllocationChange(change)}
                                                 removeBudgetCategory={async () => this.removeBudgetCategory(catID)}
                                                 modifyBudgetCategoryColor={async (id, color) => this.modifyBudgetCategoryColor(id, color)}
+                                                              draft={false}
+
                                             />
 
                                         </div>
@@ -664,13 +678,14 @@ class BudgetClass extends React.Component {
                                         return  <div id={catID}>
                                             <BudgetCategoryNG key={`${catID}div`}
                                                 toaster={this.props.toaster}
-                                                address={`users/testUser/current/budgetCategories/${catID}`}
+                                                address={`users/${auth.currentUser.uid}/current/budgetCategories/${catID}`}
                                                 unallocatedExpenses={this.state.unallocatedExpenses}
                                                 modifyBudgetCategoryName={async (id,name) => this.modifyBudgetCategoryName(id,name)}
                                                 modifyBudgetCategoryAmount={async (id, amount) => this.modifyBudgetCategoryAmount(id, amount)}
                                                 updateUnallocatedExpenses={async (change)=> this.handleExpenseAllocationChange(change)}
                                                 removeBudgetCategory={async () => this.removeBudgetCategory(catID)}
                                                               modifyBudgetCategoryColor={async (id, color) => this.modifyBudgetCategoryColor(id, color)}
+                                                              draft={false}
 
                                             />
                                         </div>
@@ -683,14 +698,14 @@ class BudgetClass extends React.Component {
                                             <BudgetCategoryNG
                                                 key={`${catID}div`}
                                                 toaster={this.props.toaster}
-                                                address={`users/testUser/next/budgetCategories/${catID}`}
+                                                address={`users/${auth.currentUser.uid}/next/budgetCategories/${catID}`}
                                                 unallocatedExpenses={this.state.unallocatedExpenses}
                                                 modifyBudgetCategoryName={async (id,name) => this.modifyBudgetCategoryName(id,name)}
                                                 modifyBudgetCategoryAmount={async (id, amount) => this.modifyBudgetCategoryAmount(id, amount)}
                                                 updateUnallocatedExpenses={async (change)=> this.handleExpenseAllocationChange(change)}
                                                 removeBudgetCategory={async () => this.removeBudgetCategory(catID)}
                                                 modifyBudgetCategoryColor={async (id, color) => this.modifyBudgetCategoryColor(id, color)}
-
+                                                draft={false}
                                             />
 
 
@@ -704,13 +719,14 @@ class BudgetClass extends React.Component {
                                             <BudgetCategoryNG
                                                 key={`${catID}div`}
                                                 toaster={this.props.toaster}
-                                                address={`users/testUser/draft/budgetCategories/${catID}`}
+                                                address={`users/${auth.currentUser.uid}/draft/budgetCategories/${catID}`}
                                                 unallocatedExpenses={this.state.unallocatedExpenses}
                                                 modifyBudgetCategoryName={async (id,name) => this.modifyBudgetCategoryName(id,name)}
                                                 modifyBudgetCategoryAmount={async (id, amount) => this.modifyBudgetCategoryAmount(id, amount)}
                                                 updateUnallocatedExpenses={(change)=> this.handleExpenseAllocationChange(change)}
                                                 removeBudgetCategory={async () => this.removeBudgetCategory(catID)}
                                                 modifyBudgetCategoryColor={async (id, color) => this.modifyBudgetCategoryColor(id, color)}
+                                                draft={true}
                                             />
 
                                         </div>}) : null}
@@ -783,7 +799,9 @@ class BudgetClass extends React.Component {
                                                     background: "#1a1a1a", width: "auto"
                                                 }}>
                                                     <h4>
-                                                        <b>{formatter.format(2323)}</b>
+                                                        <b>{
+                                                            formatter.format(this.getTotalIncome())
+                                                        }</b>
                                                     </h4>
                                                 </div>
                                             </div>
@@ -836,7 +854,7 @@ class BudgetClass extends React.Component {
                                                     background: "rgb(26,26,26)", width: "auto",
                                                 }}>
                                                     <h4 style={(2323 - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0) >= 0) ? {color: "rgb(28,157,2)"} : {color: "rgb(169,0,0)"}}>
-                                                        <b>{formatter.format(2323 - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0))}</b>
+                                                        <b>{formatter.format(this.getTotalIncome() - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0))}</b>
                                                     </h4>
                                                 </div>
                                             </div>
@@ -846,6 +864,7 @@ class BudgetClass extends React.Component {
                                 <div>
                                     {this.state[this.state.monthView].labels.map((category, index) => {
                                         return  <Grid>
+                                            <Divider style={{margin: 0, marginTop:5}}/>
                                                 <Row >
                                                     <Col xs={9} md={9}>
                                                         <div style={{
