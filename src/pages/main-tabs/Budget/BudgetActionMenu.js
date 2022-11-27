@@ -79,15 +79,12 @@ class BudgetActionMenu extends React.Component{
                         </Button>
                     </Stack>:
                     <Stack direction={"column"} spacing={10}>
-                        <Button onClick={this.handleShow}>
-                            <DraftRound/> Enter Draft Mode
+                        <Button onClick={()=>{this.props.toggleDraftMode(false); this.setState({inDraftMode: false})}}>
+                            Exit Draft Mode
                         </Button>
                     </Stack>}
                 {(this.state.inDraftMode)?
-                    <Stack direction={"column"} spacing={10}>
-                        <Button onClick={()=>{this.props.toggleDraftMode(false); this.setState({inDraftMode: false})}}>
-                            <RestorePage/> Exit Draft Mode
-                        </Button>
+                    <Stack direction={"column"} spacing={10} style={{marginTop: 10}}>
                         <Button>
                             Import Budget
                         </Button>
