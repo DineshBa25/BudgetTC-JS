@@ -75,7 +75,7 @@ const Register = () => {
     )
     const usernameAlreadyExistsMessage = (
         <Notification type={'error'} header={'Email already exists'} duration={15000} closable>
-            <h6>The email you are trying to use is already link to an account. If this is your email, try to reset the password.</h6>
+            <h6>The email you are trying to use is already linked to another account. If this is your email, try to reset the password.</h6>
             <hr/>
             <Button appearance="link" onClick={handleReset}>Forgot Password? Reset it</Button>
         </Notification>
