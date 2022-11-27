@@ -8,6 +8,11 @@
         <option value="$PROJECT_DIR$/functions" />
         <option value="$PROJECT_DIR$/node_modules" />
         <option value="$PROJECT_DIR$/public" />
+        <option value="$PROJECT_DIR$/.idea" />
+        <option value="$PROJECT_DIR$/build" />
+        <option value="$PROJECT_DIR$/functions" />
+        <option value="$PROJECT_DIR$/node_modules" />
+        <option value="$PROJECT_DIR$/public" />
       </list>
     </option>
   </component>

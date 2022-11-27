@@ -4,6 +4,7 @@ import {database} from "../../../configs/firebaseConfig";
 import {Stack} from "rsuite";
 import {formatter} from "./BudgetFormatters";
 import IncomeCategoryItem from "./IncomeCategoryItem";
+import CategoryName from "./CategoryName";
 
 class IncomeCategoryNG extends React.Component {
         constructor() {
@@ -25,7 +26,7 @@ class IncomeCategoryNG extends React.Component {
                     let oneTimeIncome = [];
 
                     snapshot.forEach((childSnapshot) => {
-                        
+
                         let childData = childSnapshot.val();
                         console.log(childData);
                         if (childData.type === "category") {
@@ -56,40 +57,7 @@ class IncomeCategoryNG extends React.Component {
 
     handleNameChange = (id, name, category: "none given") => {
             console.log("Name change: " + id + " " + name + " " + category);
-        /*update(ref(database), {
-            [this.props.address + id + "/name"]: name
-        }).then(() => {
 
-            console.log("SUCCESS: updated name of budget item in RTDB at " + this.props.address + id + "/name");
-            //update state
-            //if id is in incomeCategories array
-            /*if(this.state.incomeCategories.some((category) => category.id === id)){
-                let incomeCategories = this.state.incomeCategories;
-                incomeCategories.forEach((category) => {
-                    if(category.id === id){
-                        category.name = name;
-                    }
-                });
-                this.setState({
-                    incomeCategories: incomeCategories
-                })
-            }
-            else if(this.state.oneTimeIncome.some((item) => item.id === id)){
-                let oneTimeIncome = this.state.oneTimeIncome;
-                oneTimeIncome.forEach((item) => {
-                    if(item.id === id){
-                        item.name = name;
-                    }
-                });
-                this.setState({
-                    oneTimeIncome: oneTimeIncome
-                })
-            }
-
-        }).catch((error) => {
-            console.error(error);
-        });*/
-        //update in firebase
 
         if(this.state.incomeCategories.some((item) => {
             return item.id === category})) {
@@ -121,28 +89,41 @@ class IncomeCategoryNG extends React.Component {
 
     }
 
-    handleAmountChange = (id, amount, category) => {
+    handleAmountChange = (id,  category,amount) => {
         //update in firebase
         console.log("Amount change: " + id + " " + amount + " " + category);
-
-        if(this.state.incomeCategories.some((item) => {
-
-            return item.id === id})){
+        //address
+        console.log(this.props.address + category + "/items/" + id + "/amount");
+        if(category !== "none given"){
+            console.log("Found category in Income categories, this is a income category");
             update(ref(database), {
-                [this.props.address + id + "/amount"]: amount
+                [this.props.address + category+ "/items/" + id + "/amount"]: amount
             }).then(() => {
                 console.log("SUCCESS: updated amount of budget item in RTDB at " + this.props.address + id + "/amount");
                 //update state
+                this.setState({
+                    incomeCategories: this.state.incomeCategories.map((item) => {
+                        if(item.id === category){
+                            item.items.map((item) => {
+                                if(item.id === id){
+                                    item.amount = amount;
+                                }
+                                return item;
+                            })
+                        }
+                        return item;
+                    })
+                })
 
             }).catch((error) => {
                 console.error(error);
             });
         }
-        else if(this.state.oneTimeIncome.some((item) => {
-
-            return item.id === id})) {
+        else  {
+            //this is one time income
+            console.log("Found category in one time income, this is one time income");
             update(ref(database), {
-                [this.props.address + category+ "/items/" + id + "/amount"]: amount
+                [this.props.address + id + "/amount"]: amount
             }).then(() => {
                 console.log("SUCCESS: updated amount of budget item in RTDB at " + this.props.address + category + "/items/" + id + "/amount");
 
@@ -157,6 +138,20 @@ class IncomeCategoryNG extends React.Component {
         this.setState({expenseList: changes});
     }
 
+    handleIncomeCategoryNameChange = (id, name) => {
+        console.log("Name change: " + id + " " + name);
+        //print address
+        console.log(this.props.address);
+
+        update(ref(database), {[this.props.address+"/"+id+"/name"]: name}).then(() => {
+            //update state
+            console.log("SUCCESS: updated name of budget category in RTDB");
+            this.setState({name: name, showNameInput: false});
+
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
 
     render() {
             return (
@@ -169,8 +164,8 @@ class IncomeCategoryNG extends React.Component {
                             <div className={"budget-income-category-header"}>
                                 <Stack direction={"row"} spacing={5} >
 
-                                    <h3  className={"budget-category-name"} style={{cursor: "pointer"}} >Miscellaneous Income</h3>
-                                  
+                                    <h3  className={"budget-category-name"}  style={{color: "#a3a7b1"}} >Miscellaneous Income</h3>
+
                                 </Stack>
 
                             </div>
@@ -179,7 +174,7 @@ class IncomeCategoryNG extends React.Component {
 
                                     return <IncomeCategoryItem item={category}
                                                                handleNameChange={(id, name)=> this.handleNameChange(id,name)}
-                                                                handleAmountChange={(id, amount)=> this.handleAmountChange(id,amount)}
+                                                                handleAmountChange={(id, amount)=> this.handleAmountChange(id,"none given",amount)}
                                     />
 
                                 }): null
@@ -192,10 +187,14 @@ class IncomeCategoryNG extends React.Component {
                                     <hr/>
                             <div className={"budget-income-category-header"}>
                                 <Stack direction={"row"} spacing={5} >
-                                    <h3  className={"budget-category-name"} style={{cursor: "pointer"}} >{category.name}</h3>
+                                    <CategoryName name={category.name} id={category.id} handleNameChange={(name)=>this.handleIncomeCategoryNameChange(category.id,name)}/>
                                     <div className={"budget-category-amount"} style={{color: "#1c9c02"}}>
                                         <h4 >
-                                            {formatter.format(category.amount)}
+                                            {formatter.format(this.state.incomeCategories.find((item) => {
+                                                return item.id === category.id
+                                            }).items.reduce ((accumulator, currentValue) => {
+                                                return accumulator + currentValue.amount
+                                            }, 0))}
                                         </h4>
                                     </div>
                                 </Stack>
@@ -205,7 +204,7 @@ class IncomeCategoryNG extends React.Component {
                                     { (category.items !== undefined) ? category.items.map((category1) => {
                                         return <IncomeCategoryItem item={category1}
                                                                    handleNameChange={(id, name)=> this.handleNameChange(id,name, category.id)}
-                                                                   handleAmountChange={(id, amount)=> this.handleAmountChange(id,amount, category.id)}
+                                                                   handleAmountChange={(id, amount)=> this.handleAmountChange(id,category.id,amount)}
                                         />
 
                                     }): null}
