@@ -120,10 +120,9 @@ function App() {
                                                              style={{height: "100%"}}>
                                                         <Sidenav.Body>
                                                             <Nav>
-                                                                <Nav.Item eventKey={1} as={NavLink}
-                                                                          href="/app/dashboard"
-                                                                          icon={<Dashboard/>}>
-                                                                    Dashboard
+                                                                <Nav.Item eventKey={7} as={NavLink} href="/app/budget"
+                                                                          icon={<TableIcon/>}>
+                                                                    Budget Book
                                                                 </Nav.Item>
                                                                 <Nav.Item eventKey={4} as={NavLink}
                                                                           href="/app/investments"
@@ -137,10 +136,6 @@ function App() {
                                                                 <Nav.Item eventKey={6} as={NavLink} href="/app/calendar"
                                                                           icon={<CalendarIcon/>}>
                                                                     Calendar
-                                                                </Nav.Item>
-                                                                <Nav.Item eventKey={7} as={NavLink} href="/app/budget"
-                                                                          icon={<TableIcon/>}>
-                                                                    Budget Book
                                                                 </Nav.Item>
                                                             </Nav>
                                                         </Sidenav.Body>
