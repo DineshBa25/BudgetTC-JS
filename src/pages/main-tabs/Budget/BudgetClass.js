@@ -797,7 +797,7 @@ class BudgetClass extends React.Component {
                                     <FlexboxGrid align="top" justify={"center"}>
                                         <FlexboxGrid.Item colspan={7}>
                                             <div className={"summary-income-view"}>
-                                                <h6>Income</h6>
+                                                <h6 style={{color: "#fff"}} >Income</h6>
                                                 <div  className={"summary-view-amount"}>
                                                     <h4>
                                                         <b>{
@@ -814,7 +814,7 @@ class BudgetClass extends React.Component {
                                         </FlexboxGrid.Item>
                                         <FlexboxGrid.Item colspan={7}>
                                             <div className={"summary-expense-view"}>
-                                                <h6>Expenses</h6>
+                                                <h6 style={{color: "#fff"}}>Expenses</h6>
                                                 <div className={"summary-view-amount"}>
                                                     <h4>
                                                         <b>{formatter.format(//sum up values in this.state.chartState.series
@@ -830,10 +830,10 @@ class BudgetClass extends React.Component {
                                         </FlexboxGrid.Item>
                                         <FlexboxGrid.Item colspan={7}>
                                             <div className={"summary-balance-view"}>
-                                                <h6>Balance</h6>
+                                                <h6  style={{color: "#fff"}}>Balance</h6>
                                                 <div  className={"summary-view-amount"}>
-                                                    <h4 style={(2323 - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0) >= 0) ? {color: "rgb(28,157,2)"} : {color: "rgb(169,0,0)"}}>
-                                                        <b>{formatter.format(this.getTotalIncome() - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0))}</b>
+                                                    <h4 style={(this.getTotalIncome() - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0) >= 0) ? {color: "rgb(28,157,2)"} : {color: "rgb(255,0,0)"}}>
+                                                        <b>{formatter.format(Math.abs( this.getTotalIncome() - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0)))}</b>
                                                     </h4>
                                                 </div>
                                             </div>
