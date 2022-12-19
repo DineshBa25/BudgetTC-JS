@@ -167,7 +167,7 @@ class BudgetCategoryItem extends React.Component {
                                 <Input value={parseFloat(this.state.amount).toFixed(2)}  readOnly onSelect={() => {this.setState({showAmountInput: true})}}/>
                             </InputGroup>}
                     </div>
-                    <div className={"budget-category-item__info"} style={{background: "rgba(0,0,0,0.18)", borderRadius: 10}}>
+                    <div className={"budget-category-item__info"}>
 
                         <Whisper
                             trigger="hover"
