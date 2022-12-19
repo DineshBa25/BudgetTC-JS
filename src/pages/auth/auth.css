@@ -1,9 +1,9 @@
 .logodiv {
     height: 50px;
     width: 275px;
-    background-color: #282c32;
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px
+    background: rgba(27, 32, 40, 0.97);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
 }
 
 .mainPanel {
