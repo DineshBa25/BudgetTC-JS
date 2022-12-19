@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import BudgetColorPicker from "./BudgetColorPicker";
+import Typography from "@mui/material/Typography";
 /** Renders a collection of BudgetCategoryItems that allows you to view and control a sub budget category.
  *  */
 
@@ -259,7 +260,7 @@ class BudgetCategoryNG extends React.Component {
                             <Message
                                 style={{height: 25, marginTop: 3, width: 10,  background: this.state.color, cursor: "pointer"}}/>
                         </Whisper>
-                        {this.state.showNameInput? <Input size={"lg"} maxLength={32}  type={"text"} defaultValue={this.state.name} autoFocus onBlur={(event)=> this.modifyBudgetCategoryName(event.target.value)}/> : <h3  className={"budget-category-name"} style={{cursor: "pointer"}} onClick={() => this.setState({showNameInput: true})}> {this.state.name}</h3>}
+                        {this.state.showNameInput? <Input size={"lg"} maxLength={32}  type={"text"} defaultValue={this.state.name} autoFocus onBlur={(event)=> this.modifyBudgetCategoryName(event.target.value)}/> : <Typography variant={"h4"} className={"budget-category-name"} style={{cursor: "pointer"}} onClick={() => this.setState({showNameInput: true})}> {this.state.name}</Typography>}
                         <div className={"budget-category-amount"}>
                             <h4 >
                                 {formatter.format(this.state.amount)}
