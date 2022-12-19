@@ -1,11 +1,12 @@
 import React from 'react';
 import Typography from "@mui/material/Typography";
-import {Button, Form, InputNumber, Nav, Table} from "rsuite";
+import {Button, Form, InputNumber, Modal, Nav, Table} from "rsuite";
 import {ReflexContainer, ReflexElement, ReflexSplitter} from "react-reflex";
 import Box from "@mui/material/Box";
 import { Fab, SpeedDial, Stack} from "@mui/material";
 import {Add, ImportExportRounded} from "@mui/icons-material";
 import {CompanyProfile, MiniChart, TechnicalAnalysis} from "react-tradingview-embed";
+import RemindIcon from '@rsuite/icons/legacy/Remind';
 
 
 
@@ -34,12 +35,37 @@ const styles = {
 let theme = "dark"
 
 
+
 function InvestmentTab() {
+    const [open, setOpen] = React.useState(true);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     const [active, setActive] = React.useState('home');
-    const [activeSymbol, setActiveSymbol] = React.useState('SPX500USD');
+    const [activeSymbol, setActiveSymbol] = React.useState('SPY');
     return (
         <div className={"box8"}>
+            <Modal backdrop="static" role="alertdialog" open={open} onClose={handleClose} size="lg" >
+                <Modal.Body>
+                    <RemindIcon style={{ color: '#ffb300', fontSize: 24 }} />
+                    <Typography variant="h6" component="div" gutterBottom>
+                        Welcome to the Investment Tab!
+                        </Typography>
+                    <Typography variant="body2" gutterBottom>
+                        This tab is still under development. Please be patient as we work to bring you the best experience possible. The primary inspiration for this application is to make advanced budgeting easier. The tab will get updates so that you are able to do the following:
+                        </Typography>
+                    <ul>
+                        <li><b>Look Up:</b> you will be able to search and find investments and view the underlying fundamental data (provided by TradingView) that will help you decide if it is right for you and your portfolio</li>
+                        <li><b>Take Notes:</b> you will be able to take notes on the investments you are interested in and save them for later</li>
+                        <li><b>Compare:</b> you will be able to compare investments to each other and see how they stack up</li>
+                    </ul>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleClose} appearance="primary">
+                        Ok, take to me to the tab <b>(not completed)</b>!
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <ReflexContainer orientation={"vertical"}>
                 <ReflexElement className="left-pane" flex={0.6}>
                     <div className="test3" style={{
