@@ -9,42 +9,21 @@ import * as today from "date-fns";
 
 //todo make firestore database rules secure. firebase.google.com/docs/firestore/security/get-started
 
-
-
-
 const dbRef = getDatabase();
 
 export async function registerUserToFireStore(uid, info) {
     try {
         await set(ref(database, `users/${uid}`), {
-                "current": {
-                    "budgetCategories": {
-                    },
-                    "incomeCategories": {
-                    }
+            userId: uid
+        })
+            .then(
+                (response) => {
+                    console.log("SUCCESS: Wrote document with UID to RTDB", response);
                 },
-                "draft": {
-                    "budgetCategories": {
-                    },
-                    "incomeCategories": {
-                    }
-                },
-                "next": {
-                    "budgetCategories": {
-                    },
-                    "incomeCategories": {
-                    }
-                },
-                "previous": {
-                    "budgetCategories": {
-                    },
-                    "incomeCategories": {
-                    }
-                },
-                "unallocatedExpenses": {
+                (error) => {
+                    console.log(error);
                 }
-
-        });
+            );
         await setDoc(doc(db, "users", uid), {
             userInformation: {
                 email: info.email,
