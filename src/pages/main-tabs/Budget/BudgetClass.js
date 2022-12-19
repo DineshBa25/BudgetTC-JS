@@ -107,10 +107,12 @@ class BudgetClass extends React.Component {
                     chartColors = [];
                     idList = [];
                     //using the response from the database, looping through each category and adding it to the arrays created above
+                    if(snapshot.val().current)
                     Object.entries(snapshot.val().current["budgetCategories"]).forEach((category) => {
                         idList.push(category[0]);
                         //go through each item in category and add to ammount then push to chartValues
                         amount = 0;
+                        if(category[1].items)
                         Object.entries(category[1].items).forEach((item) => {
                             console.log(item[1].amount)
                             amount += parseFloat(item[1].amount);
@@ -122,6 +124,8 @@ class BudgetClass extends React.Component {
                     //modifying state with updated arrays so that the values that changed will trigger a rerender
                     incomeCats = [];
                     oneTimeIncome = [];
+
+                    if(snapshot.val().current["incomeCategories"])
                     Object.entries(snapshot.val().current["incomeCategories"]).forEach((category) => {
                         //using the response from the database, looping through each category and adding it to the arrays created above
 
@@ -150,10 +154,11 @@ class BudgetClass extends React.Component {
                     idList = [];
 
                     //for users/${auth.currentUser.uid}/next update state
+                    if(snapshot.val().next)
                     Object.entries(snapshot.val().next["budgetCategories"]).forEach((category) => {
                         idList.push(category[0]);
                         amount = 0;
-                        Object.entries(category[1].items).forEach((item) => {
+                        if(category[1].items)                            Object.entries(category[1].items).forEach((item) => {
                             console.log(item[1].amount)
                             amount += parseFloat(item[1].amount);
                         })
@@ -161,6 +166,7 @@ class BudgetClass extends React.Component {
                         chartNames.push(category[1].name);
                         chartColors.push(category[1].color);
                     });
+                    if(snapshot.val().next)
                     Object.entries(snapshot.val().next["incomeCategories"]).forEach((category) => {
                         if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
                     })
@@ -189,9 +195,10 @@ class BudgetClass extends React.Component {
                 idList =[];
 
 //for users/${auth.currentUser.uid}/previous update state
-
+                if(snapshot.val().previous)
                 Object.entries(snapshot.val().previous["budgetCategories"]).forEach((category) => {
                     amount = 0;
+
                     Object.entries(category[1].items).forEach((item) => {
                         console.log(item[1].amount)
                         amount += parseFloat(item[1].amount);
@@ -202,9 +209,11 @@ class BudgetClass extends React.Component {
                     idList.push(category[0]);
                 });
 
+                if(snapshot.val().previous)
                 Object.entries(snapshot.val().previous["incomeCategories"]).forEach((category) => {
                     if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
                 })
+
 
                 this.setState({
                     previous: {
@@ -226,9 +235,11 @@ class BudgetClass extends React.Component {
                 oneTimeIncome = [];
                 idList = [];
                 //for users/${auth.currentUser.uid}/draft update state
+                if(snapshot.val().draft)
                 Object.entries(snapshot.val().draft["budgetCategories"]).forEach((category) => {
                     idList.push(category[0]);
                     amount = 0;
+                    if(category[1].items)
                     Object.entries(category[1].items).forEach((item) => {
                         console.log(item[1].amount)
                         amount += parseFloat(item[1].amount);
@@ -238,6 +249,7 @@ class BudgetClass extends React.Component {
                     chartColors.push(category[1].color);
                 });
 
+                if(snapshot.val().draft["incomeCategories"])
                 Object.entries(snapshot.val().draft["incomeCategories"]).forEach((category) => {
                     if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
                 })
@@ -564,7 +576,7 @@ class BudgetClass extends React.Component {
                                                  style={{cursor: "pointer", marginBottom: 4}}>
                                     <Button appearance={"ghost"} size={"sm"}
                                             style={{
-                                                borderColor: this.state[this.state.monthView].colors[index], color: "#a3a8b2", background: "#1a1d24"
+                                                borderColor: this.state[this.state.monthView].colors[index], color: "#a3a8b2", background: "var(--color-background)"
                                             }}>
                                         <Badge color="red"
                                                style={{background: this.state[this.state.monthView].colors[index]}}></Badge> {this.state[this.state.monthView].labels[index]}
@@ -579,7 +591,7 @@ class BudgetClass extends React.Component {
                                           addToUnallocatedExpenses={(add) => this.addToUnallocatedExpenses(add)}
                         />
 
-                        <p style={{textAlign: "center", marginTop: 30, color: "#9b9b9b"}}>Last
+                        <p style={{textAlign: "center", marginTop: 30}}>Last
                             Saved: {this.state.lastSaved}</p>
                     </div>
 
@@ -739,7 +751,7 @@ class BudgetClass extends React.Component {
                                 <ButtonMUI variant="outlined" style={{
                                     width: "calc(100% - 300px)",
                                     borderRadius: 20,
-                                    background: 'rgb(26,29,36)',
+                                    background: 'var(--color-background)',
                                     margin: 10,
                                     padding: 10
                                 }}
@@ -756,7 +768,7 @@ class BudgetClass extends React.Component {
                     <div className={"budgetNavigationInfoPanel"} style={{textAlign: "center"}}>
 
                             <div className={"budgetDateSelector"}>
-                                {(this.state.draftMode)? <h2 style={{color: "#e8eaef"}}>Draft Mode</h2> :<DatePickerTC
+                                {(this.state.draftMode)? <h2>Draft Mode</h2> :<DatePickerTC
                                     modifyStateForMonthView={(month, year) => this.modifyStateForMonthView(month, year)}></DatePickerTC> }
 
                             </div>
@@ -784,20 +796,9 @@ class BudgetClass extends React.Component {
                                 <div>
                                     <FlexboxGrid align="top" justify={"center"}>
                                         <FlexboxGrid.Item colspan={7}>
-                                            <div style={{
-                                                height: 65,
-                                                background: "rgb(28,157,2)",
-                                                marginTop: 15,
-                                                marginBottom: 15,
-                                                marginLeft: 5,
-                                                marginRight: 5,
-                                                borderRadius: 15,
-                                                textAlign: "center"
-                                            }}>
+                                            <div className={"summary-income-view"}>
                                                 <h6>Income</h6>
-                                                <div style={{
-                                                    background: "#1a1a1a", width: "auto"
-                                                }}>
+                                                <div  className={"summary-view-amount"}>
                                                     <h4>
                                                         <b>{
                                                             formatter.format(this.getTotalIncome())
@@ -812,20 +813,9 @@ class BudgetClass extends React.Component {
                                             </center>
                                         </FlexboxGrid.Item>
                                         <FlexboxGrid.Item colspan={7}>
-                                            <div style={{
-                                                height: 65,
-                                                background: "rgb(169,0,0)",
-                                                marginTop: 15,
-                                                marginBottom: 15,
-                                                marginRight: 5,
-                                                marginLeft: 5,
-                                                borderRadius: 15,
-                                                textAlign: "center"
-                                            }}>
+                                            <div className={"summary-expense-view"}>
                                                 <h6>Expenses</h6>
-                                                <div style={{
-                                                    background: "#1a1a1a", width: "auto"
-                                                }}>
+                                                <div className={"summary-view-amount"}>
                                                     <h4>
                                                         <b>{formatter.format(//sum up values in this.state.chartState.series
                                                             this.state[this.state.monthView].series.reduce((a, b) => a + b, 0))}</b>
@@ -839,20 +829,9 @@ class BudgetClass extends React.Component {
                                             </center>
                                         </FlexboxGrid.Item>
                                         <FlexboxGrid.Item colspan={7}>
-                                            <div style={{
-                                                height: 65,
-                                                background: "#3c3c48",
-                                                marginTop: 15,
-                                                marginBottom: 15,
-                                                marginRight: 10,
-                                                marginLeft: 5,
-                                                borderRadius: 15,
-                                                textAlign: "center"
-                                            }}>
+                                            <div className={"summary-balance-view"}>
                                                 <h6>Balance</h6>
-                                                <div style={{
-                                                    background: "rgb(26,26,26)", width: "auto",
-                                                }}>
+                                                <div  className={"summary-view-amount"}>
                                                     <h4 style={(2323 - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0) >= 0) ? {color: "rgb(28,157,2)"} : {color: "rgb(169,0,0)"}}>
                                                         <b>{formatter.format(this.getTotalIncome() - this.state[this.state.monthView].series.reduce((a, b) => a + b, 0))}</b>
                                                     </h4>
