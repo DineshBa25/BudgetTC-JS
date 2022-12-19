@@ -36,10 +36,6 @@ import CalendarTab from "./pages/main-tabs/calendar/CalendarTab";
 import {auth} from "./configs/firebaseConfig";
 import BudgetClass from "./pages/main-tabs/Budget/BudgetClass";
 import HeaderBar from "./components/HeaderBar";
-import {ThemeSwitcherProvider} from "react-css-theme-switcher";
-import GearCircleIcon from '@rsuite/icons/legacy/GearCircle';
-import CheckIcon from "@rsuite/icons/Check";
-import {MdDarkMode, MdLightMode} from "react-icons/md";
 
 export function withToaster(Component) {
     return function WrapperComponent(props) {
@@ -52,13 +48,7 @@ function App() {
     const [activeKey, setActiveKey] = React.useState('1');
 
     const [theme, setTheme] = useState('dark');
-    const toggleTheme = () => {
-        if (theme === 'light') {
-            setTheme('dark');
-        } else {
-            setTheme('light');
-        }
-    };
+
     const darkTheme = createTheme({
         palette: {
             mode: theme,
