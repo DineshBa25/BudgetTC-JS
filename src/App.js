@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import 'rsuite/styles/index.less';
 import {BrowserRouter as Router, Route, Link, Routes, Outlet} from "react-router-dom";
@@ -6,14 +6,14 @@ import {
     CustomProvider,
     Sidenav,
     Nav,
-    Navbar, useToaster
+    Navbar, useToaster, Toggle
 } from 'rsuite';
 import {Dashboard} from "@rsuite/icons";
 import CalendarIcon from '@rsuite/icons/Calendar';
 import BarChartIcon from '@rsuite/icons/BarChart';
 import TableIcon from '@rsuite/icons/Table';
 import {ThemeProvider} from '@mui/material/styles';
-import {Container, Content, Sidebar} from 'rsuite';
+import {Container, Content, Sidebar, Button} from 'rsuite';
 import 'react-reflex/styles.css'
 import {AngleLeft, AngleRight} from "@rsuite/icons/es/icons/legacy";
 import InvestmentTab from "./pages/main-tabs/investment/InvestmentTab"
@@ -36,6 +36,10 @@ import CalendarTab from "./pages/main-tabs/calendar/CalendarTab";
 import {auth} from "./configs/firebaseConfig";
 import BudgetClass from "./pages/main-tabs/Budget/BudgetClass";
 import HeaderBar from "./components/HeaderBar";
+import {ThemeSwitcherProvider} from "react-css-theme-switcher";
+import GearCircleIcon from '@rsuite/icons/legacy/GearCircle';
+import CheckIcon from "@rsuite/icons/Check";
+import {MdDarkMode, MdLightMode} from "react-icons/md";
 
 export function withToaster(Component) {
     return function WrapperComponent(props) {
@@ -47,15 +51,20 @@ export function withToaster(Component) {
 function App() {
     const [activeKey, setActiveKey] = React.useState('1');
 
-
-
+    const [theme, setTheme] = useState('dark');
+    const toggleTheme = () => {
+        if (theme === 'light') {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+    };
     const darkTheme = createTheme({
         palette: {
-            mode: 'dark',
+            mode: theme,
 
         },
     });
-
 
     const NavToggle = ({expand, onChange}) => {
         return (
@@ -98,16 +107,17 @@ function App() {
     const toaster = useToaster();
 
     console.log("App loaded")
+
     return (
-        <div>
+        <div className={`${theme}`}>
             <ThemeProvider theme={darkTheme}>
-                <CustomProvider theme={'dark'}>
+                <CustomProvider theme={theme}>
                     <Router>
                         <Routes>
                             <Route exact path="/app" element={
                                 <ProtectedRoute>
                                     <div>
-                                        <HeaderBar/>
+                                        <HeaderBar  theme={theme} setTheme={setTheme}/>
                                         <div className={'div1'}>
                                             <Container>
                                                 <Sidebar
@@ -137,6 +147,7 @@ function App() {
                                                                           icon={<CalendarIcon/>}>
                                                                     Calendar
                                                                 </Nav.Item>
+
                                                             </Nav>
                                                         </Sidenav.Body>
                                                     </Sidenav>
@@ -178,6 +189,7 @@ function App() {
                             </Route>
                         </Routes>
                     </Router>
+
                 </CustomProvider>
             </ThemeProvider>
         </div>

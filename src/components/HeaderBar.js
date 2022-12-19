@@ -1,4 +1,4 @@
-import {IconButton, Message, Nav, Navbar, Stack, useToaster} from "rsuite";
+import {IconButton, Message, Nav, Navbar, Stack, Toggle, Tooltip, useToaster, Whisper} from "rsuite";
 import ReloadIcon from "@rsuite/icons/Reload";
 import {updateUserDataInFireStore} from "../pages/auth/firebase";
 import GearIcon from "@rsuite/icons/Gear";
@@ -7,8 +7,9 @@ import React, {useState} from "react";
 import {useSelector} from "react-redux";
 import {setQuote} from "../pages/userDataSlice";
 import {store} from "../redux/store";
+import {MdDarkMode, MdLightMode} from "react-icons/md";
 
-const HeaderBar = () => {
+const HeaderBar = ({theme, setTheme}) => {
 
     const toaster = useToaster();
 
@@ -85,7 +86,7 @@ const HeaderBar = () => {
                     height="55" width="205" alt={"BudgetTC-Logo"}/>
             </Nav>
             <Nav className={"scrollGradient"}
-                 style={{width: "calc(100% - 370px)", height: 55, overflowX: "auto"}}>
+                 style={{width: "calc(100% - 470px)", height: 55, overflowX: "auto"}}>
                 <div>
                     <Stack alignItems={"flex-end"}>
                         <h6 style={{marginLeft: 20, color: "#797979", marginTop: 23}}>
@@ -113,6 +114,14 @@ const HeaderBar = () => {
                 </div>
             </Nav>
             <Nav pullRight>
+                <Whisper placement="bottom" controlId="control-id-hover" trigger="hover" speaker={
+                    <Tooltip>
+                    Switch to { (theme === "dark") ? "Light" : "Dark" } Theme
+                </Tooltip>}>
+                    <Nav.Item onClick={()=>{setTheme( (theme==='dark')? 'light': 'dark' )}} >
+                        <Toggle checked={theme === 'dark'} checkedChildren={<MdDarkMode/>} unCheckedChildren={<MdLightMode />} style={{alignContent: "center"}} />
+                    </Nav.Item>
+                </Whisper>
                 <Nav.Item>
                     <IconButton icon={<GearIcon/>} onClick={() => setOpen(true)}
                                 style={{background: "rgba(255,255,255,0)"}}/>
