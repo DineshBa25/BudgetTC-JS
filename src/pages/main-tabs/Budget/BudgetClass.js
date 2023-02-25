@@ -4,7 +4,7 @@ import {
 } from "rsuite";
 import {database} from "../../../configs/firebaseConfig";
 import {ref, update, get, child, set} from "firebase/database";
-import {AiOutlinePlus} from "react-icons/ai";
+import {AiOutlineCheck, AiOutlinePlus} from "react-icons/ai";
 import {GiAbstract002, GiReceiveMoney, GiTakeMyMoney} from "react-icons/gi";
 import './Budget.css';
 import BudgetCategoryRender from "./BudgetCategoryRender";
@@ -16,13 +16,14 @@ import BudgetActionMenu from "./BudgetActionMenu";
 import ScrollTo from "react-scroll-into-view";
 import BudgetCategoryNG from "./BudgetCategoryNG";
 import IncomeCategoryNG from "./IncomeCategoryNG";
-import {Button as ButtonMUI} from "@mui/material";
+import {Button as ButtonMUI, ButtonGroup} from "@mui/material";
 import {auth} from "../../../configs/firebaseConfig";
 
 class BudgetClass extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            addCategoryButtonState: 0,
             unallocatedExpenses: [["expense1", {name: "Test Expense", amount: 70}]],
             draftMode: false,
             validMonth: true,
@@ -199,6 +200,7 @@ class BudgetClass extends React.Component {
                 Object.entries(snapshot.val().previous["budgetCategories"]).forEach((category) => {
                     amount = 0;
 
+                    if(category[1].items)
                     Object.entries(category[1].items).forEach((item) => {
                         console.log(item[1].amount)
                         amount += parseFloat(item[1].amount);
@@ -208,8 +210,8 @@ class BudgetClass extends React.Component {
                     chartColors.push(category[1].color);
                     idList.push(category[0]);
                 });
-
                 if(snapshot.val().previous)
+                if(snapshot.val().previous["incomeCategories"])
                 Object.entries(snapshot.val().previous["incomeCategories"]).forEach((category) => {
                     if (category[1].type === "oneTime") oneTimeIncome.push(category[1]); else if (category[1].type === "category") incomeCats.push(category[1]);
                 })
@@ -417,6 +419,51 @@ class BudgetClass extends React.Component {
 
     }
 
+
+    addIncomeCategory() {
+        //add the category to the labels array
+        let newId = "item" + parseInt(this.state[this.state.monthView].income.categories.length + this.state[this.state.monthView].income.oneTime.length + 1);
+
+
+        console.log("State of income categories: " + this.state[this.state.monthView].income.categories);
+
+        //update in firebase
+        update(ref(database), {
+            [`users/${auth.currentUser.uid}/` + this.state.monthView + "/incomeCategories/" + newId]:
+                {name: "Unnamed Category", amount: 0, color: "#00a609", id: newId, type: "category"}
+        })
+            .then(() => {
+                this.setState({
+
+                    [this.state.monthView]: {
+                        ...this.state[this.state.monthView],
+                        income: {
+                            ...this.state[this.state.monthView].income,
+                            categories: {
+                                ...this.state[this.state.monthView].income.categories,
+                                [newId]: {
+                                    name: "Unnamed Category",
+                                    amount: 0,
+                                    color: "#000000",
+                                    id: newId,
+                                    type: "category"
+                                }
+                            }
+                        }
+                    },
+                }, () => {
+                    console.log("State of income categories: " + this.state[this.state.monthView].income.categories);
+                })
+                console.log("SUCCESS: added income category to RTDB at users/${auth.currentUser.uid}/" + this.state.monthView + "/incomeCategories/" + newId);
+            })
+            .catch(
+                (error) => {
+                    console.log("ERROR: could not add income category to RTDB at users/${auth.currentUser.uid}/" + this.state.monthView + "/income/categories/" + newId);
+                    console.log(error);
+                }
+            )
+    }
+
     /**
      * Function that is called when a user edits the amount of a budget category.
      * @param newAmount the new amount allocated for the category
@@ -425,6 +472,8 @@ class BudgetClass extends React.Component {
      * @param item the id of the item that is being updated
      * @param type the type of item that is being updated (either "category" or "oneTime")
      */
+
+
     handleOnIncomeAmountChange(newAmount, newTotal, cat, item, type) {
         setTimeout(() => {
             const updates = {}; //stores the updates to be sent to the database
@@ -547,6 +596,69 @@ class BudgetClass extends React.Component {
         };
 
         let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        let addCategoryButtonOptions = {
+            0:  <ButtonMUI variant="outlined" style={{
+                width: "calc(100% - 300px)",
+                borderRadius: 20,
+                background: 'var(--color-background)',
+                margin: 10,
+                padding: 10
+            }}  startIcon={<AiOutlinePlus/>} size={"large"} onClick={async () => {
+                //set the button state to 1 to ask if income or budget category should be added
+                this.setState({addCategoryButtonState: 1});
+            }}>
+                Add new category
+            </ButtonMUI>,
+            1: <ButtonGroup variant={"outlined"} fullWidth style={{
+                width: "calc(100% - 300px)",
+                borderRadius: 20,
+                background: 'var(--color-background)',
+                margin: 10,
+
+            }} size={"large"}>
+                <ButtonMUI startIcon={<AiOutlinePlus/>}  color={"success"} onClick={async () => {
+                    this.addIncomeCategory()
+                    //set the button state to 2 for 2 seconds to show that the income category was added
+                    this.setState({addCategoryButtonState: 2});
+                    setTimeout(() => {
+                        this.setState({addCategoryButtonState: 0});
+                    }, 2000);
+                }}
+                           style={{
+                                 borderTopLeftRadius: 20,
+                                 borderBottomLeftRadius: 20,
+
+                           }}
+                >
+                    New Income category
+                </ButtonMUI>
+                <ButtonMUI startIcon={<AiOutlinePlus/>}  color={"error"} onClick={async () => {
+                    this.addBudgetCategory()
+                    this.setState({addCategoryButtonState: 2});
+                    setTimeout(() => {
+                        this.setState({addCategoryButtonState: 0});
+                    }, 2000);
+                }}
+                            style={{
+                                 borderTopRightRadius: 20,
+                                 borderBottomRightRadius: 20,
+                            }}
+                >
+                    New Budget category
+                </ButtonMUI>
+            </ButtonGroup>,
+            2: <ButtonMUI variant="outlined" style={{
+                width: "calc(100% - 300px)",
+                borderRadius: 20,
+                background: 'var(--color-background)',
+                margin: 10,
+                padding: 10
+            }} size={"large"} color={"success"} startIcon={<AiOutlineCheck/>}
+            >
+                Category added
+            </ButtonMUI>
+        }
 
         return (<div>
             {(this.state.loading) ? <div style={{position: "fixed", top: "calc(50% - 50px)", left: "50%"}}>
@@ -748,17 +860,9 @@ class BudgetClass extends React.Component {
                             </div>: null}
 
                             <center>
-                                <ButtonMUI variant="outlined" style={{
-                                    width: "calc(100% - 300px)",
-                                    borderRadius: 20,
-                                    background: 'var(--color-background)',
-                                    margin: 10,
-                                    padding: 10
-                                }}
-
-                                           startIcon={<AiOutlinePlus/>} size={"large"} onClick={async () => this.addBudgetCategory()}>
-                                    Add new category
-                                </ButtonMUI>
+                                {
+                                    addCategoryButtonOptions[this.state.addCategoryButtonState]
+                                }
 
                             </center>
                         </div></div>}
